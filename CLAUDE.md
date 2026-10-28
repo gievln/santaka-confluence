@@ -16,4 +16,4 @@ Demo dbt Fusion project for the Helmes × KKPDA AI & data event (2026-11-24). Fi
 - `models/silver/<domain>/_private/<source>/stg_<domain>__<source>_<entity>` — one leg per source conformed to the shape gold needs; `models/silver/<domain>/<domain>__<entity>` — unions legs and holds all business rules. Business codes only, no hashes
 - `models/gold/` — Kimball dims/facts/bridges with enforced contracts; `_private/stg_gold__*` resolves `_xid` keys via `md5_composite_keys`, `'-1'` for unknown members. No business logic in gold
 - `macros/generate_schema_name.sql` keeps schema names unprefixed
-- `profiles.yml` — Snowflake trial `ACZWMTF-JJ13025`, key-pair auth (`~/.snowflake/santaka_rsa_key.p8`, outside the repo), role ACCOUNTADMIN, warehouse `SANTAKA_DEMO_WH`, database `SANTAKA_DEMO`; env vars override
+- `profiles.yml` — local only (git-ignored). Copy `profiles.example.yml` and fill in account, login and key path; key-pair auth, warehouse `SANTAKA_DEMO_WH`, database `SANTAKA_DEMO`. Run dbt with `--profiles-dir .`

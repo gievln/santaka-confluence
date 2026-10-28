@@ -1,0 +1,39 @@
+epos_system_code,epos_item_key,menu_item
+kasapro,Santaka Spritz,Santaka Spritz
+kasapro,SPRITZ,Santaka Spritz
+kasapro,Spritz Santaka 0.2,Santaka Spritz
+kasapro,Spritzas,Santaka Spritz
+kasapro,Midaus Mule,Midaus Mule
+kasapro,MULE midus,Midaus Mule
+kasapro,Mule (Santaka),Midaus Mule
+kasapro,Santaka G&T,Santaka G&T
+kasapro,Gin Tonic,Santaka G&T
+kasapro,G&T,Santaka G&T
+kasapro,Gira 0.5,Santaka Gira 0.5
+kasapro,Santaka gira,Santaka Gira 0.5
+kasapro,GIRA,Santaka Gira 0.5
+kasapro,Rabarbarų limonadas,Rabarbarų limonadas
+kasapro,Limonadas rabarb.,Rabarbarų limonadas
+kasapro,Rhubarb lemonade,Rabarbarų limonadas
+kasapro,Sidras 0.5,Santaka Sidras 0.5
+kasapro,Santaka Sidras,Santaka Sidras 0.5
+kasapro,CIDER,Santaka Sidras 0.5
+kasapro,Midus 50ml,Santaka Midus 50 ml
+kasapro,Midaus šotas,Santaka Midus 50 ml
+kasapro,Alus 0.5,Alus Kalnapilis 0.5
+kasapro,Kalnapilis 0.5,Alus Kalnapilis 0.5
+kasapro,BEER,Alus Kalnapilis 0.5
+kasapro,Vanduo,Vanduo 0.5
+kasapro,Water 0.5,Vanduo 0.5
+kasapro,Dešrainis,Dešrainis
+kasapro,Hot dog,Dešrainis
+barflow,1001,Santaka Spritz
+barflow,1002,Midaus Mule
+barflow,1003,Santaka G&T
+barflow,2001,Santaka Gira 0.5
+barflow,2002,Rabarbarų limonadas
+barflow,2003,Santaka Sidras 0.5
+barflow,2004,Santaka Midus 50 ml
+barflow,3001,Alus Kalnapilis 0.5
+barflow,3002,Vanduo 0.5
+barflow,4001,Dešrainis

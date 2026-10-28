@@ -1,0 +1,7 @@
+sku,product_name,category,abv_pct,pack,pack_volume_ml,list_price_eur_per_l,production_cost_eur_per_l
+SNT-BIT-07,Santaka Bitter,aperitif,18.0,bottle 0.7 l,700,24.0,7.8
+SNT-MID-05,Santaka Midus,mead,14.0,bottle 0.5 l,500,30.0,9.5
+SNT-GIR-30,Santaka Gira,kvass,0.5,keg 30 l,30000,2.4,0.7
+SNT-RAB-33,Santaka Rabarbarų limonadas,lemonade,0.0,can 0.33 l,330,3.6,1.1
+SNT-SID-30,Santaka Sidras,cider,4.5,keg 30 l,30000,4.2,1.4
+SNT-TON-20,Santaka Tonikas,tonic,0.0,bag-in-box 20 l,20000,3.0,0.6

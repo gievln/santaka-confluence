@@ -1,0 +1,175 @@
+models:
+  - name: stg_epos_sales__kasapro_sales_line
+    description: KasaPro leg conformed to epos_sales__sales_line. Retries removed, VAT stripped, promo lines linked.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [transaction_id, line_no]
+
+  - name: stg_epos_sales__barflow_sales_line
+    description: BarFlow leg conformed to epos_sales__sales_line. Voided receipts removed, cents to euros.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [transaction_id, line_no]
+
+  - name: epos_sales__sales_line
+    description: >
+      Every EPOS line from every system in one shape, net of VAT, with Santaka's event and menu item.
+      Includes third-party items. line_amount_as_reported is the amount column as each system exports it
+      (KasaPro incl. VAT, BarFlow excl. VAT); VIP voucher lines have line_amount_net = 0.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [epos_system_code, transaction_id, line_no]
+    columns:
+      - name: epos_system_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [kasapro, barflow]
+      - name: event_code
+        description: Null means the organiser event ref is unknown to Santaka's CRM.
+        data_tests: [not_null]
+      - name: menu_item
+        description: Null means an EPOS item key is missing from ref_epos_item_map.
+        data_tests: [not_null]
+      - name: sold_at
+        data_tests: [not_null]
+      - name: payment_method
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [card, cash, vip_voucher]
+      - name: line_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [sale, promo_adjustment]
+
+  - name: epos_sales__santaka_sales_line
+    description: >
+      One row per EPOS line and Santaka SKU, with attributed sales under both rules, revenue share and
+      cost of goods. Attributed sales use what the organiser took (net of VAT, after promos, vouchers at 0).
+      The *_as_reported columns skip the VAT fix, for the before/after comparison.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [epos_system_code, transaction_id, line_no, santaka_sku]
+    columns:
+      - name: attributed_sales_volume_eur
+        description: Net sales attributed to Santaka by recipe volume (the organiser's preferred rule).
+      - name: attributed_sales_cost_eur
+        description: Net sales attributed to Santaka by ingredient cost (Santaka's preferred rule).
+      - name: cost_of_goods_eur
+        description: Santaka litres served times production cost; zero on promo adjustment lines.
+
+  - name: recipe__ingredient
+    description: Recipe sheet with cocktail names filled down and Santaka ingredients mapped to SKUs.
+    columns:
+      - name: sheet_row_no
+        data_tests: [not_null, unique]
+      - name: recipe_cocktail_name
+        data_tests: [not_null]
+
+  - name: recipe__menu_item_allocation
+    description: >
+      Santaka's share of each menu item per SKU. Standalone products are 1.0 under both rules;
+      cocktails are split by recipe volume or ingredient cost.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [menu_item, santaka_sku]
+    columns:
+      - name: santaka_sku
+        data_tests: [not_null]
+      - name: volume_allocation_pct
+        data_tests: [not_null]
+      - name: cost_allocation_pct
+        data_tests: [not_null]
+
+  - name: event__event
+    description: One row per event with venue code and contract terms.
+    columns:
+      - name: event_code
+        data_tests: [not_null, unique]
+      - name: venue_code
+        description: Null means the CRM venue name is missing from ref_venues.
+        data_tests: [not_null]
+      - name: revenue_share_pct
+        data_tests: [not_null]
+
+  - name: event__venue
+    description: Event venues with coordinates for weather lookups.
+    columns:
+      - name: venue_code
+        data_tests: [not_null, unique]
+
+  - name: event__ticket_sales
+    description: Tickets sold per event, day and ticket type.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_code, event_date, ticket_type]
+    columns:
+      - name: event_code
+        data_tests: [not_null]
+
+  - name: event__cost
+    description: Santaka's own costs per event and cost type.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_code, cost_type]
+
+  - name: product__product
+    description: Santaka product catalogue.
+    columns:
+      - name: sku
+        data_tests: [not_null, unique]
+
+  - name: product__menu_item
+    description: Bar menu items across all EPOS systems.
+    columns:
+      - name: menu_item
+        data_tests: [not_null, unique]
+      - name: menu_item_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [santaka_cocktail, santaka_product, third_party]
+
+  - name: calendar__date
+    description: One row per day of 2026 with weekday, season and Lithuanian public holidays.
+    columns:
+      - name: calendar_date
+        data_tests: [not_null, unique]
+
+  - name: settlement__statement_line
+    description: Organiser statement lines mapped to Santaka's event and menu item.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_code, menu_item]
+    columns:
+      - name: event_code
+        data_tests: [not_null]
+      - name: menu_item
+        description: Null means the organiser's item description matches no menu item.
+        data_tests: [not_null]
+
+  - name: settlement__reconciliation
+    description: >
+      Organiser statement vs Santaka's figures per event and Santaka menu item. payable_data_gap_eur
+      compares like with like (volume rule both sides), so it isolates data problems; payable_rule_gap_eur
+      is the cost-vs-volume dispute.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_code, menu_item]
+    columns:
+      - name: reconciliation_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [matched, mismatch, missing_from_statement]

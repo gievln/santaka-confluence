@@ -1,0 +1,26 @@
+{# Grain: one row per EPOS line and Santaka product (epos_system_code, transaction_id, line_no, product_xid). #}
+select
+    sl.sales_date::date as sales_date,
+    sl.sold_at::timestamp_ntz as sold_at,
+    sl.event_xid::varchar as event_xid,
+    sl.venue_xid::varchar as venue_xid,
+    sl.menu_item_xid::varchar as menu_item_xid,
+    sl.product_xid::varchar as product_xid,
+    sl.epos_system_code::varchar as epos_system_code,
+    sl.transaction_id::varchar as transaction_id,
+    sl.line_no::number(38, 0) as line_no,
+    sl.line_type::varchar as line_type,
+    sl.payment_method::varchar as payment_method,
+    sl.is_vip_voucher::boolean as is_vip_voucher,
+    sl.bar_no::number(38, 0) as bar_no,
+    sl.quantity::number(38, 0) as quantity,
+    sl.santaka_ml_served::number(14, 2) as santaka_ml_served,
+    coalesce(sl.attributed_sales_as_reported_volume_eur, 0)::number(14, 4) as attributed_sales_as_reported_volume_eur,
+    coalesce(sl.attributed_sales_as_reported_cost_eur, 0)::number(14, 4) as attributed_sales_as_reported_cost_eur,
+    coalesce(sl.attributed_sales_volume_eur, 0)::number(14, 4) as attributed_sales_volume_eur,
+    coalesce(sl.attributed_sales_cost_eur, 0)::number(14, 4) as attributed_sales_cost_eur,
+    coalesce(sl.revenue_share_volume_eur, 0)::number(14, 4) as revenue_share_volume_eur,
+    coalesce(sl.revenue_share_cost_eur, 0)::number(14, 4) as revenue_share_cost_eur,
+    coalesce(sl.cost_of_goods_eur, 0)::number(14, 4) as cost_of_goods_eur,
+from
+    {{ ref('stg_gold__santaka_sales_line') }} as sl

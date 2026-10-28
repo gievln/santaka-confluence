@@ -1,0 +1,36 @@
+name: santaka_confluence
+version: "0.1.0"
+profile: santaka_confluence
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  santaka_confluence:
+    bronze:
+      +schema: bronze
+      +materialized: view
+    silver:
+      +schema: silver
+      +materialized: table
+      epos_sales:
+        _private:
+          +schema: silver_private
+          +materialized: view
+    gold:
+      +schema: gold
+      +materialized: table
+      _private:
+        +schema: gold_private
+        +materialized: view
+    platinum:
+      +schema: platinum
+
+seeds:
+  santaka_confluence:
+    raw:
+      +schema: raw
+    reference:
+      +schema: reference

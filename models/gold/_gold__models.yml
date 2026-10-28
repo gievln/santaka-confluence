@@ -1,0 +1,402 @@
+models:
+  - name: stg_gold__santaka_sales_line
+    description: Private. Resolves surrogate keys for fct_santaka_sales from silver business codes.
+
+  - name: fct_santaka_sales
+    description: >
+      Santaka's share of bar sales. Grain: one row per EPOS line and Santaka product
+      (epos_system_code, transaction_id, line_no, product_xid). Cocktails appear once per Santaka
+      ingredient. All money is EUR, net of VAT unless *_as_reported; measures are additive and never null.
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [epos_system_code, transaction_id, line_no, product_xid]
+    columns:
+      - name: sales_date
+        data_type: date
+        description: FK to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: calendar_date
+      - name: sold_at
+        data_type: timestamp_ntz
+      - name: event_xid
+        data_type: varchar
+        description: FK to dim_event.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_event')
+                field: event_xid
+      - name: venue_xid
+        data_type: varchar
+        description: FK to dim_venue.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_venue')
+                field: venue_xid
+      - name: menu_item_xid
+        data_type: varchar
+        description: FK to dim_menu_item. What the bar sold.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_menu_item')
+                field: menu_item_xid
+      - name: product_xid
+        data_type: varchar
+        description: FK to dim_product. The Santaka product inside the menu item.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_xid
+      - name: epos_system_code
+        data_type: varchar
+        description: Degenerate. Source EPOS system (kasapro, barflow).
+      - name: transaction_id
+        data_type: varchar
+        description: Degenerate. Receipt / transaction id in the source EPOS.
+      - name: line_no
+        data_type: number(38,0)
+        description: Degenerate. Line within the transaction; promo adjustment lines are 91+.
+      - name: line_type
+        data_type: varchar
+        description: sale or promo_adjustment.
+      - name: payment_method
+        data_type: varchar
+        description: card, cash or vip_voucher.
+      - name: is_vip_voucher
+        data_type: boolean
+      - name: bar_no
+        data_type: number(38,0)
+      - name: quantity
+        data_type: number(38,0)
+        description: Units of the menu item on the line.
+      - name: santaka_ml_served
+        data_type: number(14,2)
+        description: Millilitres of the Santaka product poured; zero on promo adjustment lines.
+      - name: attributed_sales_as_reported_volume_eur
+        data_type: number(14,4)
+        description: Attributed by volume using the amount as the EPOS exported it (KasaPro incl. VAT). Before/after only.
+      - name: attributed_sales_as_reported_cost_eur
+        data_type: number(14,4)
+        description: Attributed by cost using the amount as the EPOS exported it (KasaPro incl. VAT). Before/after only.
+      - name: attributed_sales_volume_eur
+        data_type: number(14,4)
+        description: Net sales attributed to Santaka by recipe volume (organiser's preferred rule).
+      - name: attributed_sales_cost_eur
+        data_type: number(14,4)
+        description: Net sales attributed to Santaka by ingredient cost (Santaka's preferred rule).
+      - name: revenue_share_volume_eur
+        data_type: number(14,4)
+        description: attributed_sales_volume_eur times the event's contracted revenue share.
+      - name: revenue_share_cost_eur
+        data_type: number(14,4)
+        description: attributed_sales_cost_eur times the event's contracted revenue share.
+      - name: cost_of_goods_eur
+        data_type: number(14,4)
+        description: Santaka litres served times production cost.
+
+  - name: fct_ticket_sales
+    description: Tickets sold. Grain one row per event, day and ticket type.
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_xid, event_date, ticket_type]
+    columns:
+      - name: event_date
+        data_type: date
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: calendar_date
+      - name: event_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_event')
+                field: event_xid
+      - name: venue_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_venue')
+                field: venue_xid
+      - name: ticket_type
+        data_type: varchar
+        description: general or vip.
+      - name: tickets_sold
+        data_type: number(38,0)
+
+  - name: fct_event_costs
+    description: Santaka's own costs. Grain one row per event and cost type.
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_xid, cost_type]
+    columns:
+      - name: event_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_event')
+                field: event_xid
+      - name: cost_type
+        data_type: varchar
+        description: logistics, staff, branding or listing_fee.
+      - name: amount_eur
+        data_type: number(14,2)
+
+  - name: dim_date
+    description: Conformed calendar. One row per day of 2026, keyed on calendar_date.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: calendar_date
+        data_type: date
+        data_tests: [not_null, unique]
+      - name: calendar_year
+        data_type: number(38,0)
+      - name: month_no
+        data_type: number(38,0)
+      - name: month_name
+        data_type: varchar
+      - name: iso_week_no
+        data_type: number(38,0)
+      - name: iso_day_of_week
+        data_type: number(38,0)
+        description: 1 = Monday, 7 = Sunday.
+      - name: day_name
+        data_type: varchar
+      - name: is_weekend
+        data_type: boolean
+      - name: season
+        data_type: varchar
+      - name: is_public_holiday
+        data_type: boolean
+        description: Lithuanian public holiday.
+      - name: public_holiday_name
+        data_type: varchar
+
+  - name: dim_event
+    description: One row per event with organiser and contract terms, plus the '-1' unknown member.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: event_xid
+        data_type: varchar
+        data_tests: [not_null, unique]
+      - name: event_code
+        data_type: varchar
+      - name: event_name
+        data_type: varchar
+      - name: organiser_name
+        data_type: varchar
+      - name: venue_xid
+        data_type: varchar
+        description: The event's venue, for drilling to dim_venue.
+      - name: start_date
+        data_type: date
+      - name: end_date
+        data_type: date
+      - name: event_days
+        data_type: number(38,0)
+      - name: is_festival
+        data_type: boolean
+        description: True for events longer than one day.
+      - name: indoor_outdoor
+        data_type: varchar
+      - name: capacity_per_day
+        data_type: number(38,0)
+      - name: revenue_share_pct
+        data_type: number(10,6)
+        description: Contracted share of Santaka's attributed net sales.
+      - name: share_basis
+        data_type: varchar
+        description: Contract wording for what the share applies to.
+
+  - name: dim_venue
+    description: Conformed venue dimension with coordinates, plus the '-1' unknown member.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: venue_xid
+        data_type: varchar
+        data_tests: [not_null, unique]
+      - name: venue_code
+        data_type: varchar
+      - name: venue_name
+        data_type: varchar
+      - name: venue_type
+        data_type: varchar
+      - name: city
+        data_type: varchar
+      - name: latitude
+        data_type: number(9,6)
+      - name: longitude
+        data_type: number(9,6)
+
+  - name: dim_product
+    description: Santaka product catalogue, plus the '-1' unknown member.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: product_xid
+        data_type: varchar
+        data_tests: [not_null, unique]
+      - name: sku
+        data_type: varchar
+      - name: product_name
+        data_type: varchar
+      - name: category
+        data_type: varchar
+      - name: abv_pct
+        data_type: number(4,1)
+      - name: pack
+        data_type: varchar
+      - name: pack_volume_ml
+        data_type: number(38,0)
+      - name: list_price_eur_per_l
+        data_type: number(10,2)
+      - name: production_cost_eur_per_l
+        data_type: number(10,2)
+
+  - name: dim_menu_item
+    description: Bar menu items across all EPOS systems, plus the '-1' unknown member.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: menu_item_xid
+        data_type: varchar
+        data_tests: [not_null, unique]
+      - name: menu_item
+        data_type: varchar
+      - name: menu_item_type
+        data_type: varchar
+        description: santaka_product, santaka_cocktail or third_party.
+      - name: serve_ml
+        data_type: number(38,0)
+
+  - name: bridge_product_recipe
+    description: >
+      Which Santaka products each menu item contains and with what weight under each attribution rule.
+      Reference for showing recipes and what-if splits; fct_santaka_sales is already allocated.
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [menu_item_xid, product_xid]
+    columns:
+      - name: menu_item_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_menu_item')
+                field: menu_item_xid
+      - name: product_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_xid
+      - name: santaka_ml_per_serve
+        data_type: number(10,2)
+      - name: volume_allocation_pct
+        data_type: number(10,6)
+      - name: cost_allocation_pct
+        data_type: number(10,6)
+
+  - name: fct_settlement_reconciliation
+    description: >
+      Organiser's settlement statement next to Santaka's own figures. Grain one row per event and
+      Santaka menu item. payable_data_gap_eur isolates data problems (same volume rule on both sides);
+      payable_rule_gap_eur is what the cost rule would add on top.
+    config:
+      contract:
+        enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [event_xid, menu_item_xid]
+    columns:
+      - name: event_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_event')
+                field: event_xid
+      - name: menu_item_xid
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_menu_item')
+                field: menu_item_xid
+      - name: is_on_statement
+        data_type: boolean
+      - name: reconciliation_status
+        data_type: varchar
+        description: matched (data gap within EUR 1), mismatch, or missing_from_statement.
+      - name: statement_quantity_sold
+        data_type: number(38,0)
+      - name: model_quantity_sold
+        data_type: number(38,0)
+      - name: statement_attributed_sales_eur
+        data_type: number(14,4)
+      - name: model_attributed_sales_volume_eur
+        data_type: number(14,4)
+      - name: model_attributed_sales_cost_eur
+        data_type: number(14,4)
+      - name: statement_payable_eur
+        data_type: number(14,4)
+        description: What the organiser says it owes Santaka.
+      - name: model_revenue_share_volume_eur
+        data_type: number(14,4)
+      - name: model_revenue_share_cost_eur
+        data_type: number(14,4)
+      - name: payable_data_gap_eur
+        data_type: number(14,4)
+        description: Santaka's volume-rule share minus the organiser's payable. Non-zero means a data problem.
+      - name: payable_rule_gap_eur
+        data_type: number(14,4)
+        description: Extra Santaka would receive under the cost rule.

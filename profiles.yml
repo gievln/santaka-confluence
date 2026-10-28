@@ -1,0 +1,13 @@
+santaka_confluence:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT', 'ACZWMTF-JJ13025') }}"
+      user: "{{ env_var('SNOWFLAKE_USER', 'GIEDRIUS.VALANCIUS@HELMES.COM') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH', '/Users/giedrius.valancius/.snowflake/santaka_rsa_key.p8') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'SANTAKA_DEMO_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'SANTAKA_DEMO') }}"
+      schema: dev
+      threads: 4

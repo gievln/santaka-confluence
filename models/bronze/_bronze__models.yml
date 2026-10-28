@@ -1,0 +1,106 @@
+models:
+  - name: kasapro__sales_export
+    description: >
+      KasaPro EPOS export (Garso Bangos events), one row per exported line. Not unique: connector
+      retries re-send whole transactions in a later batch, and happy-hour discounts arrive ~3 days
+      later as promo_adjustment lines (line_no 91+). Prices include VAT; item_name is free text per till.
+    columns:
+      - name: export_batch_id
+        description: -01 is the next-morning export, -02 the late one.
+        data_tests: [not_null]
+      - name: transaction_id
+        data_tests: [not_null]
+      - name: line_no
+        data_tests: [not_null]
+      - name: payment_method
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [card, cash, vip_voucher]
+      - name: line_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [sale, promo_adjustment]
+
+  - name: barflow__receipt_lines
+    description: >
+      BarFlow EPOS export (Arena Events events), one row per receipt line. Amounts in cents excl. VAT,
+      VAT in its own column. Receipts cancelled at the till stay in the export with status VOID.
+    columns:
+      - name: receipt_no
+        data_tests: [not_null]
+      - name: position
+        data_tests: [not_null]
+      - name: created_at
+        description: Parsed from dd.mm.yyyy hh:mi:ss local time. Null means an unparseable timestamp.
+        data_tests: [not_null]
+      - name: plu
+        description: BarFlow product code.
+        data_tests: [not_null]
+      - name: tender
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [KORTELE, GRYNIEJI, KVIETIMAS]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [OK, VOID]
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [receipt_no, position]
+
+  - name: organiser__ticket_sales
+    description: Organiser ticketing export, tickets sold per event day and ticket type.
+    columns:
+      - name: organiser_event_ref
+        data_tests: [not_null]
+
+  - name: organiser__settlement_statement
+    description: >
+      Organiser's settlement statement, one row per event and menu item as the organiser calculated it
+      (volume split, net of VAT). Free-text item descriptions; share in percentage points.
+    columns:
+      - name: organiser_event_ref
+        data_tests: [not_null]
+      - name: item_description
+        data_tests: [not_null]
+
+  - name: bar_sheet__recipes
+    description: >
+      Bar manager's recipe sheet. No IDs; cocktail_name is only set on the first ingredient row.
+      Ice and garnish rows have no volume or cost.
+    columns:
+      - name: sheet_row_no
+        description: Row number from the sheet; the only way to recover which cocktail a row belongs to.
+        data_tests: [not_null, unique]
+
+  - name: santaka_crm__events
+    description: Santaka's event list from its CRM, one row per event.
+    columns:
+      - name: event_code
+        data_tests: [not_null, unique]
+      - name: organiser_event_ref
+        description: The organiser's own event reference, as used in EPOS and ticketing exports.
+        data_tests: [not_null, unique]
+
+  - name: santaka_crm__contracts
+    description: Revenue-share terms per event.
+    columns:
+      - name: event_code
+        data_tests: [not_null, unique]
+
+  - name: santaka_erp__event_costs
+    description: Santaka's own costs per event and cost type.
+    columns:
+      - name: event_code
+        data_tests: [not_null]
+
+  - name: santaka_erp__products
+    description: Santaka product catalogue.
+    columns:
+      - name: sku
+        data_tests: [not_null, unique]

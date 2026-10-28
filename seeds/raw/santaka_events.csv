@@ -1,0 +1,7 @@
+event_code,event_name,organiser_name,organiser_event_ref,venue,city,start_date,end_date,indoor_outdoor,capacity_per_day
+NG26,Nemuno Garsai,Garso Bangos UAB,GB-NG26,Santakos parkas,Kaunas,2026-07-10,2026-07-12,outdoor,4500
+KVN26,Kauno Vasaros Naktys,Garso Bangos UAB,GB-KVN26,Ąžuolynas,Kaunas,2026-08-07,2026-08-08,outdoor,3950
+KMV26,Kino muzikos vakaras,Garso Bangos UAB,GB-KMV26,Kauno pilies kiemas,Kaunas,2026-06-27,2026-06-27,outdoor,2500
+LO26,Lina ir orkestras,Arena Events LT,AE-LO26,Žalgirio arena,Kaunas,2026-06-13,2026-06-13,indoor,9000
+DN26,Džiazo naktis,Arena Events LT,AE-DN26,Kauno sporto halė,Kaunas,2026-07-25,2026-07-25,indoor,3500
+RP26,Rokas Pažaislyje,Arena Events LT,AE-RP26,Pažaislio vienuolynas,Kaunas,2026-08-22,2026-08-22,outdoor,3000

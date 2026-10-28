@@ -1,0 +1,11 @@
+menu_item,menu_item_type,santaka_sku,serve_ml,recipe_cocktail_name
+Santaka Spritz,santaka_cocktail,,,Santaka Spritz
+Midaus Mule,santaka_cocktail,,,Midaus Mule
+Santaka G&T,santaka_cocktail,,,G&T
+Santaka Gira 0.5,santaka_product,SNT-GIR-30,500,
+Rabarbarų limonadas,santaka_product,SNT-RAB-33,330,
+Santaka Sidras 0.5,santaka_product,SNT-SID-30,500,
+Santaka Midus 50 ml,santaka_product,SNT-MID-05,50,
+Alus Kalnapilis 0.5,third_party,,500,
+Vanduo 0.5,third_party,,500,
+Dešrainis,third_party,,,

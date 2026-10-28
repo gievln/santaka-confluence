@@ -1,0 +1,10 @@
+models:
+  - name: sem_santaka
+    description: >
+      Semantic view for Cortex Analyst on the cleaned gold layer: sales under both attribution rules,
+      event profit, attendance, costs and organiser settlement reconciliation.
+
+  - name: sem_santaka_naive
+    description: >
+      Semantic view for Cortex Analyst on naive__sales_line and raw CRM/ERP tables. Same questions as sem_santaka,
+      answered from uncleaned data, for the before/after moment of the talk.

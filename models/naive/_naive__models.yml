@@ -1,0 +1,6 @@
+models:
+  - name: naive__sales_line
+    description: >
+      Deliberately naive sales table, the way a quick AI pilot on the raw EPOS exports would build it.
+      Retry duplicates and voided receipts are counted, KasaPro amounts include VAT while BarFlow amounts do not,
+      cocktails count 100 % to Santaka and late happy-hour discounts are ignored. Exists only for the before/after demo.

@@ -27,6 +27,9 @@ models:
         +materialized: view
     platinum:
       +schema: platinum
+    naive:
+      +schema: naive
+      +materialized: table
 
 seeds:
   santaka_confluence:

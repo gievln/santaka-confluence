@@ -400,3 +400,51 @@ models:
       - name: payable_rule_gap_eur
         data_type: number(14,4)
         description: Extra Santaka would receive under the cost rule.
+
+  - name: fct_event_profit
+    description: Santaka profit per event under both attribution rules. Grain one row per event.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: event_xid
+        data_type: varchar
+        description: FK to dim_event.
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_event')
+                field: event_xid
+      - name: venue_xid
+        data_type: varchar
+        description: FK to dim_venue.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_venue')
+                field: venue_xid
+      - name: attributed_sales_volume_eur
+        data_type: number(14,4)
+      - name: attributed_sales_cost_eur
+        data_type: number(14,4)
+      - name: revenue_share_volume_eur
+        data_type: number(14,4)
+      - name: revenue_share_cost_eur
+        data_type: number(14,4)
+      - name: cost_of_goods_eur
+        data_type: number(14,4)
+      - name: event_costs_eur
+        data_type: number(14,2)
+      - name: profit_volume_eur
+        data_type: number(14,4)
+        description: Revenue share minus cost of goods minus event costs, volume rule.
+      - name: profit_cost_eur
+        data_type: number(14,4)
+        description: Revenue share minus cost of goods minus event costs, cost rule.
+      - name: santaka_litres_served
+        data_type: number(14,2)
+      - name: tickets_sold
+        data_type: number(38,0)

@@ -1,0 +1,8 @@
+name: santaka_demo_app
+channels:
+  - snowflake
+dependencies:
+  - streamlit=1.39.0
+  - altair
+  - pandas
+  - snowflake-snowpark-python

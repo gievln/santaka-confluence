@@ -8,3 +8,12 @@ models:
     description: >
       Semantic view for Cortex Analyst on naive__sales_line and raw CRM/ERP tables. Same questions as sem_santaka,
       answered from uncleaned data, for the before/after moment of the talk.
+
+  - name: agent_santaka_clean
+    description: >
+      Snowflake Intelligence agent answering from sem_santaka (cleaned data). Shares its specification with
+      agent_santaka_naive via the santaka_agent_spec macro, so only the semantic view differs.
+
+  - name: agent_santaka_naive
+    description: >
+      Snowflake Intelligence agent answering from sem_santaka_naive (raw exports), for the before/after demo.

@@ -1,0 +1,14 @@
+definition_version: 2
+entities:
+  santaka_demo_app:
+    type: streamlit
+    identifier:
+      name: santaka_demo_app
+      database: santaka_demo
+      schema: platinum
+    title: "Santaka – AI atsako tiek, kiek tikslūs duomenys"
+    query_warehouse: santaka_demo_wh
+    main_file: streamlit_app.py
+    artifacts:
+      - streamlit_app.py
+      - environment.yml

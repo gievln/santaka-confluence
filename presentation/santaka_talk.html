@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dirbtinis intelektas atsako tiksliai tiek, kiek tikslūs yra jam pateikti duomenys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#007CC2; --dark:#0D3974; --midnight:#031545;
+  --ice:#E6F2FA; --ice2:#F3F8FC; --storm:#575757; --muted:#6B7684; --line:#D8E2EC;
+  --surface:#FCFCFB;
+  --santaka:#0D5FA6; --other:#C8701A; --vat:#9AA5B1;
+  --good:#1E8449; --good-t:#E4F3EA; --bad:#C0392B; --bad-t:#FBE9E7; --accent:#F6A753; --rule-t:#FCEFE0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+body{font-family:Roboto,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--storm)}
+.mono{font-family:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;background:var(--surface);overflow:hidden}
+.scene{position:absolute;inset:0;padding:70px 90px;opacity:0;pointer-events:none;transition:opacity .5s ease}
+.scene.active{opacity:1;pointer-events:auto}
+.scene.dark{background:linear-gradient(135deg,var(--midnight) 0%,var(--dark) 60%,#1F6FB8 100%);color:#D6E6F5}
+h1,h2,h3{color:var(--midnight);margin:0;line-height:1.15}
+.dark h1,.dark h2,.dark h3{color:#fff}
+h2{font-size:48px;margin-bottom:18px}
+h3{font-size:30px}
+p{font-size:28px;line-height:1.45;margin:0 0 18px}
+.eyebrow{font-size:18px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--blue);margin-bottom:14px}
+.dark .eyebrow{color:#9FD3F2}
+.muted{color:var(--muted)}
+[data-step]{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+[data-step].shown{opacity:1;transform:none}
+.big-q{font-size:54px;font-weight:700;color:var(--midnight);line-height:1.2}
+.callout{border-left:6px solid var(--blue);background:var(--ice);padding:22px 28px;border-radius:0 12px 12px 0;font-size:30px;color:var(--midnight)}
+.callout.accent{border-left-color:var(--accent);background:#FFF6E8}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 26px}
+.tabnum{font-variant-numeric:tabular-nums}
+.live{display:inline-flex;align-items:center;gap:10px;font-size:18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--bad);border-radius:999px;padding:6px 16px}
+.live::before{content:"";width:10px;height:10px;border-radius:50%;background:#fff;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+#progress{position:absolute;left:0;bottom:0;height:6px;background:var(--blue);transition:width .4s ease;z-index:5}
+#counter{position:absolute;right:22px;bottom:14px;font-size:14px;color:var(--muted);z-index:5}
+.tip{position:absolute;pointer-events:none;background:var(--midnight);color:#fff;font-size:18px;padding:10px 14px;border-radius:8px;display:none;z-index:9;max-width:620px;line-height:1.4;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.tip .mono{font-size:14px;color:#BFD9F0;word-break:break-all}
+.draft{position:absolute;top:24px;right:30px;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--other);border:2px solid var(--other);border-radius:999px;padding:4px 12px}
+
+/* title */
+.title-wrap{display:flex;flex-direction:column;justify-content:center;height:100%;max-width:1250px}
+.title-wrap h1{font-size:72px;margin:12px 0 30px}
+.title-meta{font-size:26px;color:#BFD9F0}
+
+/* intro */
+.intro{display:grid;grid-template-columns:520px 1fr;gap:60px;margin-top:26px}
+.brand{font-size:92px;font-weight:700;color:var(--santaka);letter-spacing:.04em;line-height:1}
+.fake{display:inline-block;margin-top:14px;font-size:18px;font-weight:700;color:var(--other);border:2px solid var(--other);border-radius:999px;padding:4px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chip{background:var(--ice);color:var(--dark);border-radius:999px;padding:8px 16px;font-size:20px;font-weight:500}
+.flow{display:grid;grid-template-columns:1fr 46px 1fr 46px 1fr;align-items:stretch}
+.flow .box{background:#fff;border:2px solid var(--line);border-radius:14px;padding:18px;font-size:21px;line-height:1.35;color:var(--midnight)}
+.flow .box b{display:block;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+.flow .box.santaka{border-color:var(--santaka)}
+.flow .arrow{display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--blue)}
+.formula{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:23px;color:var(--midnight)}
+.formula .term{background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 14px;line-height:1.2}
+.formula .term small{display:block;font-size:14px;color:var(--muted)}
+.formula .term.plus{border-color:var(--santaka)}
+.formula .term.minus{border-color:var(--other)}
+.formula .op{font-size:32px;font-weight:700;color:var(--muted)}
+.disclaimer{position:absolute;left:90px;bottom:40px;font-size:17px;color:var(--muted)}
+
+/* bars */
+.hbars{display:grid;grid-template-columns:300px 1fr;gap:16px 22px;align-items:center;margin-top:30px}
+.hbars .lab{font-size:24px;color:var(--midnight);font-weight:500;text-align:right}
+.hbars .track{position:relative;height:40px}
+.hbars .bar{position:absolute;top:4px;height:32px;border-radius:0 4px 4px 0;background:var(--santaka);width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.hbars .bar.neg{border-radius:4px 0 0 4px;background:var(--bad)}
+.hbars .val{position:absolute;top:5px;font-size:24px;font-weight:700;color:var(--midnight);white-space:nowrap;opacity:0;transition:opacity .4s ease .8s}
+.hbars.grown .val{opacity:1}
+.hbars .axis0{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--line)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:50px}
+.duo .hbars{grid-template-columns:230px 1fr;gap:12px 14px}
+.duo .hbars .lab{font-size:20px}
+.side-title{font-size:26px;font-weight:700;color:#fff;border-radius:8px;padding:8px 16px;display:inline-block}
+
+/* error board */
+.board{display:grid;gap:10px;margin-top:24px}
+.err{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;font-size:24px;color:var(--midnight);transition:background .5s ease,border-color .5s ease}
+.err .mark{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;background:var(--bad);transition:background .5s ease}
+.err .tag{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 12px;opacity:0;transition:opacity .5s ease}
+.err.solved{background:var(--good-t);border-color:var(--good)}
+.err.solved .mark{background:var(--good)}
+.err.solved .tag{opacity:1;color:var(--good);border:1px solid var(--good)}
+.err.rule{background:var(--rule-t);border-color:var(--other)}
+.err.rule .mark{background:var(--other)}
+.err.rule .tag{opacity:1;color:#8A4A0E;border:1px solid var(--other)}
+.err.dim{opacity:.45}
+.err.hidden{display:none}
+.split{display:grid;grid-template-columns:1fr 640px;gap:50px}
+.example{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.example .lbl{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+.example pre{font-family:"Roboto Mono",ui-monospace,Menlo,monospace;font-size:16px;line-height:1.55;background:var(--ice2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0;color:var(--dark);white-space:pre;overflow:hidden}
+.example pre .x{background:var(--bad-t);color:var(--bad);text-decoration:line-through}
+.example pre .ok{color:var(--good);font-weight:500}
+.counter-big{font-size:96px;font-weight:700;color:var(--santaka);line-height:1;font-variant-numeric:tabular-nums}
+
+/* spritz */
+.spritz{display:grid;grid-template-columns:420px 1fr;gap:60px;margin-top:20px}
+.glass-box{position:relative;height:620px}
+.price{position:relative;height:74px;border-radius:8px;overflow:hidden;background:var(--ice2);display:flex}
+.price .seg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;white-space:nowrap;overflow:hidden;transition:flex-basis .9s cubic-bezier(.2,.8,.2,1);flex:0 0 0%}
+.price .seg + .seg{border-left:2px solid var(--surface)}
+.price-scale{display:flex;justify-content:space-between;font-size:18px;color:var(--muted);margin-top:6px}
+.guesses{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:26px}
+.guess{background:#fff;border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;font-size:44px;font-weight:700;color:var(--midnight)}
+.matrix{display:grid;grid-template-columns:220px 1fr 1fr;gap:12px;margin-top:26px;font-size:24px}
+.matrix .h{font-weight:700;color:var(--midnight);padding:10px 14px}
+.matrix .c{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;font-size:42px;font-weight:700;color:var(--santaka)}
+.legend{display:flex;gap:26px;font-size:20px;margin:16px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{display:inline-block;width:18px;height:18px;border-radius:4px}
+
+/* star schema */
+.star text{font-family:Roboto,"Segoe UI",system-ui,sans-serif}
+.star .node{transition:opacity .5s ease}
+
+/* semantic cards */
+.terms{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:26px}
+.term-card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--santaka);border-radius:12px;padding:18px 22px}
+.term-card .w{font-size:30px;font-weight:700;color:var(--midnight)}
+.term-card .syn{font-size:17px;color:var(--muted);margin:2px 0 8px}
+.term-card .def{font-size:22px;color:var(--storm);line-height:1.4}
+.term-card.rule{border-left-color:var(--other)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 · title -->
+<section class="scene dark" id="s-title">
+  <div class="title-wrap">
+    <div class="eyebrow">Helmes × KKPDA · 2026-11-24</div>
+    <h1>Dirbtinis intelektas atsako tiksliai tiek, kiek tikslūs yra jam pateikti duomenys</h1>
+    <div class="title-meta">Giedrius Valančius · Helmes</div>
+    <div class="title-meta" style="margin-top:40px;font-size:20px;color:#9FD3F2">Demonstracija: Snowflake · dbt · Cortex Analyst · Streamlit</div>
+  </div>
+</section>
+
+<!-- 2 · meet Santaka -->
+<section class="scene" id="s-intro">
+  <div class="eyebrow">Susipažinkite</div>
+  <div class="intro">
+    <div>
+      <div class="brand">SANTAKA</div>
+      <div class="fake">Išgalvota įmonė · sugeneruoti duomenys</div>
+      <p style="margin-top:22px">Kauno gėrimų gamintoja. Vasarą tiekia savo gėrimus Kauno koncertams ir festivaliams.</p>
+      <div class="chips">
+        <span class="chip">Bitter</span><span class="chip">Midus</span><span class="chip">Gira</span>
+        <span class="chip">Rabarbarų limonadas</span><span class="chip">Sidras</span><span class="chip">Tonikas</span>
+      </div>
+      <p class="muted" style="margin-top:18px;font-size:22px">2026 m. vasara: 6 renginiai, 2 organizatoriai</p>
+    </div>
+    <div>
+      <h3 data-step="1" style="margin-bottom:16px">Kaip Santaka uždirba</h3>
+      <div class="flow" data-step="1">
+        <div class="box santaka"><b>Santaka</b>pagamina gėrimus ir atveža juos į renginį</div>
+        <div class="arrow">→</div>
+        <div class="box"><b>Renginio baras</b>parduoda gėrimus ir kokteilius lankytojams</div>
+        <div class="arrow">→</div>
+        <div class="box"><b>Organizatorius</b>surenka visas baro pajamas</div>
+      </div>
+      <p data-step="2" style="margin-top:20px;font-size:24px">Organizatorius sumoka Santakai sutartą dalį – <b>30–35 % nuo Santakos produktų pardavimų</b>. Pardavimus jis skaičiuoja pagal savo kasos duomenis.</p>
+      <div data-step="3" style="margin-top:8px">
+        <div style="font-size:22px;font-weight:700;color:var(--midnight)">Santakos pelnas renginyje:</div>
+        <div class="formula">
+          <div class="term plus">Santakos dalis<small>30–35 % pardavimų</small></div>
+          <div class="op">−</div>
+          <div class="term minus">Savikaina<small>pagamintų gėrimų kaina</small></div>
+          <div class="op">−</div>
+          <div class="term minus">Renginio išlaidos<small>logistika, personalas, reklama, mokestis</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="disclaimer">Santaka – išgalvota įmonė, nesusijusi su jokia realia organizacija. Renginių vietos tikros, visi skaičiai sugeneruoti.</div>
+</section>
+
+<!-- 3 · sources -->
+<section class="scene dark" id="s-sources" data-steps="5" style="padding:50px 70px">
+  <div class="eyebrow">Duomenų šaltiniai · santaka – vieta, kur susilieja upės</div>
+  <h2 style="font-size:40px" id="sources-title">Iš kur Santaka gauna skaičius?</h2>
+  <svg class="river-svg" id="river-a" viewBox="0 0 1460 720" width="1460" height="720" style="position:absolute;left:70px;top:150px"></svg>
+  <div class="card river-bubble" id="bubble-a" style="position:absolute;right:70px;bottom:46px;width:520px;opacity:0;transition:opacity .6s ease;color:var(--midnight);font-size:24px;line-height:1.4">Duomenys jau surinkti viename ežere. <b>Paklauskime AI.</b></div>
+</section>
+
+<!-- 4 · ask the AI -->
+<section class="scene" id="s-ask">
+  <div class="eyebrow">Paklauskime AI</div>
+  <div class="big-q">Kurie renginiai Santakai buvo pelningiausi?</div>
+  <div data-step="1">
+    <div style="display:flex;align-items:center;gap:18px;margin-top:18px"><span class="live">Gyvai</span><span class="muted" style="font-size:22px">AI atsakymas per kelias sekundes:</span></div>
+    <div class="hbars" id="ask-bars"></div>
+  </div>
+  <div data-step="2" class="callout" style="margin-top:30px">Visi šeši renginiai pelningi. <b>Sustokime: ar galime tuo pasitikėti?</b></div>
+</section>
+
+<!-- 5 · what could be wrong -->
+<section class="scene" id="s-errors">
+  <div class="eyebrow">Ar galime pasitikėti?</div>
+  <h2>Ką rastume, jei pažiūrėtume į pačius duomenis</h2>
+  <div class="board" data-board="errors"></div>
+</section>
+
+<!-- 6 · bronze -->
+<section class="scene" id="s-bronze">
+  <div class="eyebrow">1-as filtras · bronze</div>
+  <h2>Suvienodinti: visi šaltiniai kalba ta pačia kalba</h2>
+  <div class="split">
+    <div class="board" data-board="bronze"></div>
+    <div>
+      <div data-step="1" style="margin-bottom:14px"><span class="live">Gyvai: tikras CSV failas</span></div>
+      <div class="example" data-step="1">
+        <div class="lbl" style="margin-top:0">BarFlow kasos eksportas</div>
+<pre>created_local   13.06.2026 18:39:16
+unit_net_cents  496
+status          VOID</pre>
+        <div class="lbl">Baro receptų Excel</div>
+<pre>kaina_eur_l     "24,00"</pre>
+      </div>
+      <div class="example" data-step="2" style="margin-top:14px">
+        <div class="lbl" style="margin-top:0">Po bronze sluoksnio</div>
+<pre><span class="ok">sold_at</span>         2026-06-13 18:39:16
+<span class="ok">unit_net</span>        €4,96
+status          VOID   ← dar neištaisyta
+<span class="ok">ingredient_cost</span> 24.00 €/l</pre>
+        <p class="muted" style="font-size:19px;margin:10px 0 0">Nieko neišmetame – klaidos tampa matomos, bet dar neištaisytos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · silver -->
+<section class="scene" id="s-silver">
+  <div class="eyebrow">2-as filtras · silver</div>
+  <h2>Išvalyti: verslo taisyklės vienoje vietoje</h2>
+  <div class="split">
+    <div class="board" data-board="silver"></div>
+    <div>
+      <div data-step="1" style="margin-bottom:14px"><span class="live">Gyvai: Snowflake</span></div>
+      <div class="example" data-step="1">
+        <div class="lbl" style="margin-top:0">Ta pati eilutė du kartus</div>
+<pre>…000123  SPRITZ  11.00  siunta 01
+<span class="x">…000123  SPRITZ  11.00  siunta 02</span></pre>
+        <div class="lbl">Atšauktas čekis</div>
+<pre><span class="x">BF0000013  SANTAKA MIDUS  4.96  VOID</span></pre>
+      </div>
+      <div class="example" data-step="2" style="margin-top:14px">
+<pre>11.00 su PVM       → <span class="ok">9.09 be PVM</span>
+SPRITZ, Spritzas   → <span class="ok">Santaka Spritz</span>
+LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
+      </div>
+      <div data-step="4" style="display:flex;align-items:baseline;gap:18px;margin-top:18px">
+        <div class="counter-big">48 501</div>
+        <div style="font-size:22px;line-height:1.35">tikros eilutės<br><span class="muted">iš 49 594 eksportuotų</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · one drink -->
+<section class="scene" id="s-drink">
+  <div class="eyebrow">Duomenys švarūs. Bet kiek iš kokteilio priklauso Santakai?</div>
+  <h2>Santaka Spritz renginio bare kainuoja €11</h2>
+  <div class="spritz">
+    <div class="glass-box">
+      <svg viewBox="0 0 420 620" width="420" height="620" aria-label="Spritz taurė">
+        <defs><clipPath id="bowl"><path d="M70 60 Q60 300 210 360 Q360 300 350 60 Z"/></clipPath></defs>
+        <g clip-path="url(#bowl)">
+          <rect id="liq-other" x="40" y="60" width="340" height="150" fill="#C8701A" opacity="0"/>
+          <rect id="liq-santaka" x="40" y="210" width="340" height="150" fill="#0D5FA6" opacity="0"/>
+          <rect id="liq-plain" x="40" y="60" width="340" height="300" fill="#F4B26A"/>
+        </g>
+        <path d="M70 60 Q60 300 210 360 Q360 300 350 60" fill="none" stroke="#031545" stroke-width="5"/>
+        <line x1="210" y1="360" x2="210" y2="540" stroke="#031545" stroke-width="6"/>
+        <ellipse cx="210" cy="550" rx="110" ry="18" fill="none" stroke="#031545" stroke-width="5"/>
+        <g id="liq-labels" opacity="0" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">
+          <text x="210" y="125">60 ml prosecco + 15 ml soda</text>
+          <text x="210" y="150" font-weight="400">ingredientai €0,60</text>
+          <text x="210" y="245">75 ml Santaka bitter</text>
+          <text x="210" y="270" font-weight="400">ingredientai €1,80</text>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <div class="big-q" style="font-size:44px">Kiek iš šių €11 priklauso Santakai?</div>
+      <div class="guesses" id="guesses" data-step="1">
+        <div class="guess tabnum">€11,00</div><div class="guess tabnum">€9,09</div>
+        <div class="guess tabnum">€8,25</div><div class="guess tabnum">€5,50</div>
+      </div>
+      <div data-step="2" style="margin-top:34px">
+        <div class="price">
+          <div class="seg" id="seg-vat" style="background:#9AA5B1">PVM €1,91</div>
+          <div class="seg" id="seg-santaka" style="background:#0D5FA6"></div>
+          <div class="seg" id="seg-other" style="background:#C8701A"></div>
+        </div>
+        <div class="price-scale tabnum"><span>€0</span><span>€11</span></div>
+        <div class="legend">
+          <span><i class="sw" style="background:#9AA5B1"></i>PVM – valstybei</span>
+          <span><i class="sw" style="background:#0D5FA6"></i>Santaka</span>
+          <span><i class="sw" style="background:#C8701A"></i>Kiti tiekėjai</span>
+        </div>
+        <p class="muted" id="price-note" style="margin-top:14px"></p>
+      </div>
+      <div data-step="5">
+        <div class="matrix tabnum">
+          <div></div><div class="h">pagal tūrį</div><div class="h">pagal savikainą</div>
+          <div class="h">su PVM</div><div class="c">€5,50</div><div class="c">€8,25</div>
+          <div class="h">be PVM</div><div class="c">€4,55</div><div class="c">€6,82</div>
+        </div>
+      </div>
+      <div data-step="6" class="err rule" style="margin-top:22px"><span class="mark">!</span><span>Kokteilio dalis Santakai – sutartyje neapibrėžta</span><span class="tag">taisyklė, ne klaida</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · the same rivers, now with filters -->
+<section class="scene dark" id="s-filters" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">Tie patys šaltiniai</div>
+  <h2 style="font-size:40px" id="filters-title">Tie patys septyni šaltiniai – dabar su filtrais</h2>
+  <svg class="river-svg" id="river-b" viewBox="0 0 1460 720" width="1460" height="720" style="position:absolute;left:70px;top:150px"></svg>
+  <div class="card river-bubble" id="bubble-b" style="position:absolute;right:70px;bottom:46px;width:560px;opacity:0;transition:opacity .6s ease;color:var(--midnight);font-size:24px;line-height:1.4">Ežeras skaidrus. Kad AI suprastų, kas jame yra, liko du žingsniai: <b>struktūra ir prasmė</b>.</div>
+</section>
+
+<!-- 10 · gold: Kimball star -->
+<section class="scene" id="s-gold">
+  <div class="eyebrow">3-as filtras · gold</div>
+  <h2>Aprašyti: aiški struktūra, kurią supranta visi</h2>
+  <svg class="star" viewBox="0 0 1420 560" width="1420" height="560" style="margin-top:6px">
+    <g id="star-dims" class="node" opacity="0"></g>
+    <g id="star-fact" class="node" opacity="0">
+      <rect x="560" y="230" width="300" height="100" rx="16" fill="#0D5FA6"/>
+      <text x="710" y="272" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">Santakos pardavimai</text>
+      <text x="710" y="302" text-anchor="middle" font-size="17" fill="#D6E6F5">faktas · 48 501 eilutė</text>
+    </g>
+  </svg>
+  <div data-step="3" style="position:absolute;left:90px;right:90px;bottom:60px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:22px">
+    <span style="color:var(--midnight);font-weight:700">Kiti faktai naudoja tas pačias dimensijas:</span>
+    <span class="chip">Renginio pelnas</span><span class="chip">Bilietai</span><span class="chip">Išlaidos</span><span class="chip">Atsiskaitymo suderinimas</span>
+  </div>
+</section>
+
+<!-- 11 · semantic layer -->
+<section class="scene" id="s-semantic">
+  <div class="eyebrow">Prasmė · semantinis sluoksnis</div>
+  <h2>Ką reiškia žodžiai – aprašyta vieną kartą</h2>
+  <div class="terms">
+    <div class="term-card" data-step="1"><div class="w">Pelnas</div><div class="syn">pelningumas, uždarbis, profit</div><div class="def">Santakos dalis − savikaina − renginio išlaidos. Visada Santakos, ne organizatoriaus.</div></div>
+    <div class="term-card" data-step="2"><div class="w">Renginys</div><div class="syn">festivalis, koncertas, event</div><div class="def">Šeši 2026 m. vasaros renginiai. Festivalis – ilgesnis nei viena diena.</div></div>
+    <div class="term-card" data-step="3"><div class="w">Pagal tūrį · pagal savikainą</div><div class="syn">kokteilio dalijimo taisyklės</div><div class="def">Kai klausiama nenurodant taisyklės, rodyti abu atsakymus šalia vienas kito.</div></div>
+    <div class="term-card rule" data-step="4"><div class="w">Sutarta taisyklė</div><div class="syn">sutarties sąlyga</div><div class="def">Sutartyje nenurodyta, todėl AI turi tai pasakyti, o ne pasirinkti pats.</div></div>
+  </div>
+  <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką AI laikys tiesa.</div>
+</section>
+
+<!-- 12 · the same question, two AIs -->
+<section class="scene" id="s-duo">
+  <div class="eyebrow">Tas pats klausimas – du AI</div>
+  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Kurie renginiai Santakai buvo pelningiausi?</h2><span class="live">Gyvai</span></div>
+  <div class="duo" style="margin-top:26px">
+    <div data-step="1"><span class="side-title" style="background:#C0392B">Tiesiai iš eksportų</span><div class="hbars" id="duo-naive"></div></div>
+    <div data-step="2"><span class="side-title" style="background:#1E8449">Sutvarkyti duomenys</span><div class="hbars" id="duo-clean"></div></div>
+  </div>
+  <div class="callout" data-step="3" style="margin-top:26px">„Lina ir orkestras“ – nuostolingas. „Kauno Vasaros Naktys“ – pelnas ar nuostolis priklauso nuo taisyklės. <span class="muted">Toliau gyvai: atsiskaitymas ir kokteiliai.</span></div>
+</section>
+
+<!-- 13 · twist -->
+<section class="scene" id="s-twist">
+  <div class="eyebrow">Posūkis</div>
+  <h2>Net švarūs duomenys duoda du atsakymus</h2>
+  <p class="muted">Kauno Vasaros Naktys, Santakos pelnas:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:10px">
+    <div class="card" data-step="1" style="border-top:6px solid var(--bad)"><div class="eyebrow" style="color:var(--muted)">Pagal tūrį · organizatoriaus taisyklė</div><div class="counter-big" style="color:var(--bad)">−€751</div></div>
+    <div class="card" data-step="1" style="border-top:6px solid var(--good)"><div class="eyebrow" style="color:var(--muted)">Pagal savikainą · Santakos taisyklė</div><div class="counter-big" style="color:var(--good)">+€626</div></div>
+  </div>
+  <div class="callout accent" data-step="2" style="margin-top:28px">Kuris teisingas? Sutartyje to nėra. Duomenys šio klausimo neišspręs – jį turi sutarti žmonės.</div>
+  <p data-step="3" style="margin-top:22px">Tai ir yra duomenų valdysena: verslo taisyklės užrašomos, o ne paliekamos interpretacijai.</p>
+</section>
+
+<!-- 14–15 · drafts -->
+<section class="scene" id="s-forecast">
+  <span class="draft">juodraštis</span>
+  <div class="eyebrow">Kas toliau</div>
+  <h2>Kai duomenimis galima pasitikėti, galima prognozuoti</h2>
+  <div class="card" style="margin-top:20px"><p>Lankytojai × oras × kalendorius → kiek Santakos gėrimų atvežti į kitą renginį.</p>
+  <p class="muted">Tikri 2026 m. vasaros Kauno orai. Bus sukurta vėliau.</p></div>
+</section>
+<section class="scene" id="s-ladder">
+  <span class="draft">juodraštis</span>
+  <div class="eyebrow">Kur esate jūs?</div>
+  <h2>Procesai → sistemos → duomenys → automatizacija → AI</h2>
+  <div class="card" style="margin-top:20px"><p>Penki laipteliai, kiekvienas su vienu savitikros klausimu. Toliau – diskusija „O kaip yra pas mus?“</p></div>
+</section>
+
+<div id="progress"></div>
+<div id="counter"></div>
+<div class="tip" id="tip"></div>
+</div>
+
+<script>
+/* ---------- data (from the Snowflake demo: sem_santaka_naive / sem_santaka, profit received) ---------- */
+const NAIVE_PROFIT = [
+  ["Nemuno Garsai", 32306], ["Kauno Vasaros Naktys", 13805], ["Kino muzikos vakaras", 4731],
+  ["Rokas Pažaislyje", 3781], ["Lina ir orkestras", 3264], ["Džiazo naktis", 2676],
+];
+const CLEAN_PROFIT = [
+  ["Nemuno Garsai", 5005], ["Rokas Pažaislyje", 422], ["Kino muzikos vakaras", 405],
+  ["Džiazo naktis", 267], ["Kauno Vasaros Naktys", -751], ["Lina ir orkestras", -3946],
+];
+const euro = v => (v < 0 ? "−" : "") + "€" + Math.abs(Math.round(v)).toLocaleString("lt-LT").replace(/\s/g, " ");
+
+/* ---------- horizontal bars: single series, direct labels, hover tooltip ---------- */
+function drawBars(el, rows, domain) {
+  const [lo, hi] = domain, span = hi - lo, zero = (0 - lo) / span * 100;
+  el.innerHTML = rows.map(([label, v]) => {
+    const left = v >= 0 ? zero : (v - lo) / span * 100, width = Math.abs(v) / span * 100;
+    const valPos = v >= 0 ? `left:calc(${zero + width}% + 10px)` : `left:calc(${zero}% + 10px)`;
+    return `<div class="lab">${label}</div>
+      <div class="track" data-tip="${label}: <b>${euro(v)}</b>">
+        <div class="axis0" style="left:${zero}%"></div>
+        <div class="bar ${v < 0 ? "neg" : ""}" style="left:${left}%" data-w="${width}"></div>
+        <div class="val tabnum" style="${valPos}">${euro(v)}</div>
+      </div>`;
+  }).join("");
+}
+function growBars(el, on) {
+  el.querySelectorAll(".bar").forEach(b => b.style.width = on ? b.dataset.w + "%" : "0");
+  el.classList.toggle("grown", on);
+}
+
+/* ---------- error board: one list, solved progressively by the layers ---------- */
+const ERRORS = [
+  { text: "Ta pati eilutė atsiunčiama du kartus", layer: "silver" },
+  { text: "Atšaukti čekiai lieka eksporte", layer: "silver" },
+  { text: "Nuolaidos atkeliauja po kelių dienų", layer: "silver" },
+  { text: "Vienoje sistemoje kainos su PVM, kitoje – be", layer: "silver" },
+  { text: "Centai, skirtingi datų formatai, kableliai", layer: "bronze" },
+  { text: "Tas pats gėrimas – skirtingi pavadinimai (SPRITZ, Spritzas)", layer: "silver" },
+  { text: "Organizatoriaus ataskaitoje trūksta eilutės", layer: "silver" },
+];
+function buildBoards() {
+  document.querySelectorAll("[data-board]").forEach(board => {
+    const reveal = board.dataset.board === "errors";
+    board.innerHTML = ERRORS.map((e, i) =>
+      `<div class="err" data-layer="${e.layer}" ${reveal ? `data-step="${i + 1}"` : ""}>
+        <span class="mark">✗</span><span>${e.text}</span><span class="tag">${e.layer}</span></div>`).join("");
+  });
+}
+function solveBoard(scene, layers) {
+  scene.querySelectorAll(".err[data-layer]").forEach(e => {
+    const solved = layers.includes(e.dataset.layer);
+    e.classList.toggle("solved", solved);
+    e.querySelector(".mark").textContent = solved ? "✓" : "✗";
+  });
+}
+
+/* ---------- rivers: reusable animation (sources → one channel → three filters → lake) ---------- */
+const SOURCES = [
+  ["KasaPro kasos · Garso Bangos", "GB-KMV26-0627-000001, SPRITZ, 1, 11.00, card, sale – kaina su PVM; ta pati eilutė kartais atkeliauja du kartus"],
+  ["BarFlow kasos · Arena Events", "BF0000013, 2004, SANTAKA MIDUS 50 ML, 496 ct, KORTELE, VOID – centais, be PVM, atšaukti čekiai lieka"],
+  ["Bilietų pardavimai", "GB-NG26, 2026-07-10, general, 4058"],
+  ["Baro receptų Excel", "1, Santaka Spritz, Santaka bitter, 75, \"24,00\" – be ID, kablelis vietoj taško"],
+  ["Santakos CRM · renginiai, sutartys", "NG26, Nemuno Garsai, GB-NG26, 35 %, taisyklė: (nenurodyta)"],
+  ["Santakos ERP · produktai, išlaidos", "SNT-BIT-07, Santaka Bitter, 0,7 l, savikaina €7,80/l"],
+  ["Organizatoriaus atsiskaitymas", "GB-NG26, Santaka Spritz, 4721 vnt., €20 360, 35 %, €7 126 – jų skaičiavimas"],
+];
+const CONFLUENCE = [660, 330], LAKE_IN = [1170, 330];
+const GATES = [{ f: .18, t: "Suvienodinti", d: "bronze" }, { f: .50, t: "Išvalyti", d: "silver" }, { f: .82, t: "Aprašyti", d: "gold" }];
+const DEBRIS = ["×2", "VOID", "+PVM", "?", "SPRITZ?"];
+const MUD = [139, 107, 61], CLEAR = [79, 163, 224];
+const NS = "http://www.w3.org/2000/svg";
+const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([a, v]) => e.setAttribute(a, v)); parent && parent.appendChild(e); return e; };
+const lerp = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+
+function createRiver(svg) {
+  const r = { visible: 0, filters: false, particles: [], groups: [], running: false };
+  const glow = mk("filter", { id: `glow-${svg.id}` }, mk("defs", {}, svg));
+  mk("feGaussianBlur", { stdDeviation: 3, result: "b" }, glow);
+  const merge = mk("feMerge", {}, glow);
+  mk("feMergeNode", { in: "b" }, merge);
+  mk("feMergeNode", { in: "SourceGraphic" }, merge);
+  const beds = mk("g", {}, svg), gates = mk("g", { opacity: 0, style: "transition:opacity .8s ease" }, svg);
+  r.lake = mk("ellipse", { cx: 1310, cy: 330, rx: 150, ry: 115, fill: "#8B6B3D", opacity: .9, style: "transition:fill 1.5s ease" }, svg);
+  mk("text", { x: 1310, y: 322, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#fff" }, svg).textContent = "Duomenų ežeras";
+  r.lakeSub = mk("text", { x: 1310, y: 350, "text-anchor": "middle", "font-size": 17, fill: "#fff", opacity: .85 }, svg);
+  r.lakeSub.textContent = "drumstas";
+  const layer = mk("g", {}, svg);
+  r.paths = SOURCES.map(([name, sample], i) => {
+    const y = 40 + i * 98, d = `M 340 ${y} C 540 ${y}, 600 ${CONFLUENCE[1]}, ${CONFLUENCE[0]} ${CONFLUENCE[1]}`;
+    const g = mk("g", { opacity: 0, style: "transition:opacity .6s ease" }, beds);
+    r.groups.push(g);
+    mk("path", { d, fill: "none", stroke: "rgba(159,211,242,.18)", "stroke-width": 16, "stroke-linecap": "round" }, g);
+    const lab = mk("text", { x: 328, y: y + 6, "text-anchor": "end", style: "cursor:pointer", "font-size": 17, fill: "#D6E6F5" }, g);
+    lab.textContent = name;
+    lab.dataset.tip = `<b>${name}</b><br><span class="mono">${sample}</span>`;
+    return mk("path", { d, fill: "none", stroke: "none" }, beds);
+  });
+  const mainD = `M ${CONFLUENCE[0]} ${CONFLUENCE[1]} L ${LAKE_IN[0]} ${LAKE_IN[1]}`;
+  r.mainBed = mk("path", { d: mainD, fill: "none", stroke: "rgba(159,211,242,.22)", "stroke-width": 34, "stroke-linecap": "round", opacity: 0, style: "transition:opacity .6s ease" }, beds);
+  r.main = mk("path", { d: mainD, fill: "none", stroke: "none" }, beds);
+  r.gates = gates;
+  GATES.forEach(gt => {
+    const x = CONFLUENCE[0] + (LAKE_IN[0] - CONFLUENCE[0]) * gt.f;
+    mk("rect", { x: x - 5, y: CONFLUENCE[1] - 40, width: 10, height: 80, rx: 4, fill: "#F6A753" }, gates);
+    mk("text", { x, y: CONFLUENCE[1] - 54, "text-anchor": "middle", "font-size": 18, "font-weight": 700, fill: "#fff" }, gates).textContent = gt.t;
+    mk("text", { x, y: CONFLUENCE[1] + 66, "text-anchor": "middle", "font-size": 15, fill: "#BFD9F0" }, gates).textContent = gt.d;
+  });
+  for (let n = 0; n < 150; n++) {
+    const debris = Math.random() < .12;
+    const el = debris
+      ? mk("text", { "font-size": 15, "font-weight": 700, "text-anchor": "middle", fill: "#C8A26B" }, layer)
+      : mk("circle", { r: 5, fill: "#8B6B3D", filter: `url(#glow-${svg.id})` }, layer);
+    if (debris) el.textContent = DEBRIS[n % DEBRIS.length];
+    r.particles.push({ el, debris, src: n % SOURCES.length, stage: n % 2, t: Math.random(), speed: .0016 + Math.random() * .0016, gate: 1 + (n % 2), gone: false });
+  }
+  r.set = ({ visible, filters }) => {
+    r.visible = visible; r.filters = filters;
+    r.groups.forEach((g, i) => g.setAttribute("opacity", i < visible ? 1 : 0));
+    r.mainBed.setAttribute("opacity", visible ? 1 : 0);
+    r.gates.style.opacity = filters ? 1 : 0;
+    r.lake.setAttribute("fill", filters ? "#4FA3E0" : "#8B6B3D");
+    r.lakeSub.textContent = filters ? "skaidrus" : "drumstas";
+  };
+  const tick = () => {
+    r.particles.forEach(p => {
+      p.t += p.speed;
+      if (p.t >= 1) { p.t = 0; p.stage = 1 - p.stage; if (p.stage === 0) p.gone = false; }
+      const path = p.stage === 0 ? r.paths[p.src] : r.main;
+      const pt = path.getPointAtLength(p.t * path.getTotalLength());
+      const f = p.stage === 1 ? p.t : 0;
+      if (r.filters && p.debris && p.stage === 1 && f > GATES[p.gate].f) p.gone = true;
+      const clean = r.filters ? Math.min(1, Math.max(0, (f - GATES[0].f) / (GATES[2].f - GATES[0].f))) : 0;
+      p.el.setAttribute(p.debris ? "x" : "cx", pt.x);
+      p.el.setAttribute(p.debris ? "y" : "cy", pt.y + (p.debris ? 5 : 0));
+      if (!p.debris) p.el.setAttribute("fill", `rgb(${lerp(MUD, CLEAR, clean).join(",")})`);
+      p.el.style.opacity = (p.gone || p.src >= r.visible) ? 0 : 1;
+    });
+    requestAnimationFrame(tick);
+  };
+  r.start = () => { if (!r.running) { r.running = true; tick(); } };
+  return r;
+}
+
+/* ---------- Kimball star ---------- */
+function buildStar() {
+  const g = document.getElementById("star-dims"), cx = 710, cy = 280;
+  const dims = [["Renginys", "organizatorius, sutartis"], ["Vieta", "koordinatės orams"], ["Produktas", "savikaina"], ["Meniu pozicija", "kokteilis ar produktas"], ["Data", "savaitgaliai, šventės"]];
+  dims.forEach(([name, sub], i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / dims.length, x = cx + Math.cos(a) * 470, y = cy + Math.sin(a) * 210;
+    mk("line", { x1: cx, y1: cy, x2: x, y2: y, stroke: "#D8E2EC", "stroke-width": 4 }, g);
+    mk("rect", { x: x - 130, y: y - 42, width: 260, height: 84, rx: 14, fill: "#fff", stroke: "#0D3974", "stroke-width": 2 }, g);
+    mk("text", { x, y: y - 6, "text-anchor": "middle", "font-size": 24, "font-weight": 700, fill: "#031545" }, g).textContent = name;
+    mk("text", { x, y: y + 22, "text-anchor": "middle", "font-size": 16, fill: "#6B7684" }, g).textContent = sub;
+  });
+}
+
+/* ---------- scene hooks: enter (once per visit) and step (every change) ---------- */
+let riverA, riverB;
+const enterHooks = {
+  "s-ask": () => drawBars(document.getElementById("ask-bars"), NAIVE_PROFIT, [0, 38000]),
+  "s-sources": () => { riverA = riverA || createRiver(document.getElementById("river-a")); riverA.start(); },
+  "s-filters": () => { riverB = riverB || createRiver(document.getElementById("river-b")); riverB.start(); },
+  "s-duo": () => {
+    drawBars(document.getElementById("duo-naive"), NAIVE_PROFIT, [-4500, 36000]);
+    drawBars(document.getElementById("duo-clean"), CLEAN_PROFIT, [-4500, 36000]);
+  },
+};
+const hooks = {
+  "s-sources": k => {
+    riverA.set({ visible: k >= 4 ? SOURCES.length : k, filters: false });
+    document.getElementById("sources-title").textContent = k >= 4 ? "Septyni šaltiniai, vienas ežeras – ir visi drumsti" : "Iš kur Santaka gauna skaičius?";
+    document.getElementById("bubble-a").style.opacity = k >= 5 ? 1 : 0;
+  },
+  "s-ask": k => growBars(document.getElementById("ask-bars"), k >= 1),
+  "s-bronze": k => solveBoard(document.getElementById("s-bronze"), k >= 2 ? ["bronze"] : []),
+  "s-silver": k => solveBoard(document.getElementById("s-silver"), k >= 3 ? ["bronze", "silver"] : ["bronze"]),
+  "s-drink": k => {
+    const seg = (id, pct, text) => { const s = document.getElementById(id); s.style.flexBasis = pct + "%"; s.textContent = text; };
+    const note = document.getElementById("price-note");
+    document.getElementById("liq-plain").style.opacity = k >= 3 ? 0 : 1;
+    ["liq-other", "liq-santaka"].forEach(id => document.getElementById(id).style.opacity = k >= 3 ? 1 : 0);
+    document.getElementById("liq-labels").style.opacity = k >= 3 ? 1 : 0;
+    document.getElementById("guesses").style.display = k >= 5 ? "none" : "grid";
+    const vatPct = 1.91 / 11 * 100, netPct = 100 - vatPct;
+    seg("seg-vat", vatPct, "PVM €1,91");
+    if (k <= 2) { seg("seg-santaka", 0, ""); seg("seg-other", netPct, "€9,09 lieka bare"); note.textContent = "Pirmiausia PVM: tai ne baro ir ne Santakos pinigai."; }
+    if (k === 3) { seg("seg-santaka", netPct / 2, "Santaka €4,55"); seg("seg-other", netPct / 2, "kiti €4,55"); note.textContent = "Pagal tūrį: 75 ml iš 150 ml yra Santakos, taigi 50 %."; }
+    if (k >= 4) { seg("seg-santaka", netPct * .75, "Santaka €6,82"); seg("seg-other", netPct * .25, "€2,27"); note.textContent = "Pagal ingredientų savikainą: €1,80 iš €2,40 yra Santakos, taigi 75 %."; }
+  },
+  "s-filters": k => {
+    riverB.set({ visible: SOURCES.length, filters: k >= 1 });
+    document.getElementById("bubble-b").style.opacity = k >= 2 ? 1 : 0;
+  },
+  "s-gold": k => {
+    document.getElementById("star-fact").setAttribute("opacity", k >= 1 ? 1 : 0);
+    document.getElementById("star-dims").setAttribute("opacity", k >= 2 ? 1 : 0);
+  },
+  "s-duo": k => {
+    growBars(document.getElementById("duo-naive"), k >= 1);
+    growBars(document.getElementById("duo-clean"), k >= 2);
+  },
+};
+
+/* ---------- engine: scenes, steps, keys, URL hash, scaling ---------- */
+const stage = document.getElementById("stage");
+buildBoards();
+buildStar();
+const scenes = [...document.querySelectorAll(".scene")];
+const stepsOf = s => Math.max(0, ...[...s.querySelectorAll("[data-step]")].map(e => +e.dataset.step), +(s.dataset.steps || 0));
+const STEP_COUNTS = { "s-bronze": 2, "s-silver": 4, "s-gold": 3 };
+const totalSteps = s => Math.max(stepsOf(s), STEP_COUNTS[s.id] || 0);
+let si = 0, k = 0;
+
+function render(entering) {
+  scenes.forEach((s, i) => s.classList.toggle("active", i === si));
+  const s = scenes[si];
+  if (entering && enterHooks[s.id]) enterHooks[s.id]();
+  s.querySelectorAll("[data-step]").forEach(e => e.classList.toggle("shown", +e.dataset.step <= k));
+  if (hooks[s.id]) requestAnimationFrame(() => hooks[s.id](k));
+  const total = scenes.reduce((n, sc) => n + totalSteps(sc) + 1, 0);
+  const done = scenes.slice(0, si).reduce((n, sc) => n + totalSteps(sc) + 1, 0) + k + 1;
+  document.getElementById("progress").style.width = (done / total * 100) + "%";
+  document.getElementById("counter").textContent = `${si + 1} / ${scenes.length}`;
+  history.replaceState(null, "", `#${si}.${k}`);
+}
+function next() {
+  if (k < totalSteps(scenes[si])) { k++; render(false); }
+  else if (si < scenes.length - 1) { si++; k = 0; render(true); }
+}
+function prev() {
+  if (k > 0) { k--; render(false); }
+  else if (si > 0) { si--; k = totalSteps(scenes[si]); render(true); }
+}
+document.addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); next(); }
+  if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); prev(); }
+  if (e.key === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  if (e.key === "Home") { si = 0; k = 0; render(true); }
+});
+function fit() {
+  const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+  stage.style.transform = `translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener("resize", fit);
+
+const tip = document.getElementById("tip");
+stage.addEventListener("mousemove", e => {
+  const t = e.target.closest("[data-tip]");
+  if (!t) { tip.style.display = "none"; return; }
+  const r = stage.getBoundingClientRect(), scale = r.width / 1600;
+  tip.innerHTML = t.dataset.tip;
+  tip.style.display = "block";
+  tip.style.left = Math.min((e.clientX - r.left) / scale + 18, 1600 - tip.offsetWidth - 10) + "px";
+  tip.style.top = ((e.clientY - r.top) / scale + 18) + "px";
+});
+
+const [hs, hk] = (location.hash.slice(1) || "0.0").split(".").map(Number);
+si = Math.min(hs || 0, scenes.length - 1); k = Math.min(hk || 0, totalSteps(scenes[si]));
+fit(); render(true);
+</script>
+</body>
+</html>

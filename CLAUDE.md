@@ -17,5 +17,6 @@ Demo dbt Fusion project for the Helmes × KKPDA AI & data event (2026-11-24). Fi
 - `models/gold/` — Kimball dims/facts/bridges with enforced contracts; `_private/stg_gold__*` resolves `_xid` keys via `md5_composite_keys`, `'-1'` for unknown members. No business logic in gold
 - `models/platinum/` — semantic views (`sem_*`) and Cortex agents (`agent_*`, `cortex_agent` materialization; agents are blocked on the trial account)
 - `streamlit/` — side-by-side demo app (naive vs clean Cortex Analyst), deployed with `snow streamlit deploy --replace` from that folder (connection `santaka` in `~/.snowflake/config.toml`)
+- `presentation/santaka_talk.html` — the talk: single offline HTML, 1600×900 stage, arrow keys step through `[data-step]` reveals, `#scene.step` in the URL
 - `macros/generate_schema_name.sql` keeps schema names unprefixed
 - `profiles.yml` — local only (git-ignored). Copy `profiles.example.yml` and fill in account, login and key path; key-pair auth, warehouse `SANTAKA_DEMO_WH`, database `SANTAKA_DEMO`. Run dbt with `--profiles-dir .`

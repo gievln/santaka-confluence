@@ -238,9 +238,13 @@ def render_answer(answer: dict, domain: list) -> None:
             st.code(answer["sql"], language="sql")
 
 
+def active_panels() -> list:
+    return list(PANELS) if st.session_state.get("compare", True) else ["naive"]
+
+
 def ask_both(question: str) -> None:
     answers = {}
-    for key in PANELS:
+    for key in active_panels():
         with st.spinner(f"{PANELS[key]['title']}: galvoja…"):
             answers[key] = ask_analyst(key, question)
     st.session_state.turns.append({"question": question, "answers": answers})
@@ -257,6 +261,8 @@ if button_columns[-1].button("🔄 Iš naujo", use_container_width=True):
     st.session_state.history = {key: [] for key in PANELS}
     st.session_state.turns = []
 
+st.toggle("Palyginti su sutvarkytais duomenimis", value=True, key="compare")
+
 question = st.chat_input("Užduokite klausimą apie Santakos renginius…")
 if question:
     ask_both(question)
@@ -265,7 +271,8 @@ if st.session_state.turns:
     latest = st.session_state.turns[-1]
     st.markdown(f"<div class='question'>❓ {latest['question']}</div>", unsafe_allow_html=True)
     domain = shared_domain(latest)
-    for key, column in zip(PANELS, st.columns(2, gap="large")):
+    shown = [key for key in PANELS if key in latest["answers"]]
+    for key, column in zip(shown, st.columns(len(shown), gap="large")):
         with column:
             st.markdown(
                 f"<div class='panel-title' style='background:{PANELS[key]['colour']}'>{PANELS[key]['title']}</div>",
@@ -278,7 +285,8 @@ if st.session_state.turns:
         with st.expander("Ankstesni klausimai"):
             for turn in reversed(st.session_state.turns[:-1]):
                 st.markdown(f"**❓ {turn['question']}**")
-                for key, column in zip(PANELS, st.columns(2)):
+                previous = [key for key in PANELS if key in turn["answers"]]
+                for key, column in zip(previous, st.columns(len(previous))):
                     with column:
                         st.caption(PANELS[key]["title"])
                         if "data" in turn["answers"][key]:

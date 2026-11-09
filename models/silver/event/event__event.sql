@@ -1,4 +1,4 @@
-{# One row per event with its venue code and contract terms. A festival is any event longer than one day. #}
+{# One row per event with its venue code and contract terms. A festival is any event longer than one day; a null agreed_attribution_rule means the contract does not say how cocktails are split. #}
 select
     ev.event_code,
     ev.event_name,
@@ -13,6 +13,7 @@ select
     ev.capacity_per_day,
     co.revenue_share_pct,
     co.share_basis,
+    co.attribution_rule as agreed_attribution_rule,
     co.signed_on as contract_signed_on,
 from
     {{ ref('santaka_crm__events') }} as ev

@@ -98,6 +98,12 @@ models:
         data_tests: [not_null]
       - name: revenue_share_pct
         data_tests: [not_null]
+      - name: agreed_attribution_rule
+        description: Cocktail split rule from the contract; null means not agreed.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [volume, cost]
 
   - name: event__venue
     description: Event venues with coordinates for weather lookups.

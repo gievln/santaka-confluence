@@ -87,6 +87,9 @@ dimensions (
     event.revenue_share_pct as revenue_share_pct
         with synonyms = ('revenue share', 'pajamų dalis')
         comment = 'Contracted share of Santaka attributed net sales (0.35 = 35 %)',
+    event.agreed_attribution_rule as agreed_attribution_rule
+        with synonyms = ('agreed rule', 'contract rule', 'sutarta taisyklė')
+        comment = 'Cocktail split rule written into the contract: volume or cost. Null means no rule has been agreed.',
     venue.venue_name as venue_name
         with synonyms = ('venue', 'vieta')
         comment = 'Venue name',
@@ -162,6 +165,14 @@ metrics (
     profit.total_profit_cost as sum(profit_cost_eur)
         with synonyms = ('profit by cost', 'pelnas pagal savikainą')
         comment = 'Revenue share minus cost of goods minus event costs, ingredient cost rule. EUR.',
+    profit.total_revenue_share_received as sum(revenue_share_received_eur)
+        with synonyms = ('paid by organiser', 'received', 'gauta')
+        comment = 'Revenue share the organiser settlement statement actually pays (organiser applies the volume rule). EUR.',
+    profit.total_profit_received as sum(profit_received_eur)
+        with synonyms = ('actual profit', 'realised profit', 'faktinis pelnas')
+        comment = 'Profit on what the organiser actually pays: received share minus cost of goods minus event costs. EUR.',
+    profit.total_profit_agreed_rule as sum(profit_agreed_rule_eur)
+        comment = 'Profit under the rule agreed in the contract. Null while no rule is agreed. EUR.',
     profit.profit_per_attendee_volume as sum(profit_volume_eur) / nullif(sum(tickets_sold), 0)
         comment = 'Profit per ticket sold, volume rule. EUR.',
     profit.profit_per_attendee_cost as sum(profit_cost_eur) / nullif(sum(tickets_sold), 0)
@@ -200,8 +211,11 @@ There are two rules: by recipe volume (columns and metrics ending in _volume, th
 When asked about sales, revenue or profit without naming a rule, always return both side by side and label them "by volume (organiser rule)" and "by cost (Santaka rule)".
 
 PROFIT:
-Profit = revenue share - cost of goods - event costs. Use profit.total_profit_volume and profit.total_profit_cost for profit and profitability by event.
-For "most profitable" questions rank events by profit; use profit_per_attendee metrics only when asked per person or per attendee.
+Profit = revenue share - cost of goods - event costs, always profit for Santaka.
+Check event.agreed_attribution_rule first. If it is set, answer with profit.total_profit_agreed_rule.
+If it is null (no rule agreed), return three columns: total_profit_received (what the organiser actually pays, volume rule applied by the organiser),
+total_profit_volume and total_profit_cost, and state that the contract does not specify how cocktails are split.
+For "most profitable" questions rank events by total_profit_received; use profit_per_attendee metrics only when asked per person or per attendee.
 
 SETTLEMENT:
 For questions about what the organiser owes, the settlement statement, or discrepancies, use the reconciliation metrics.
@@ -224,14 +238,16 @@ ai_verified_queries (
         sql 'select
                  event_name,
                  iff(is_festival, ''festival'', ''concert'') as event_type,
+                 coalesce(agreed_attribution_rule, ''not agreed'') as agreed_rule,
+                 round(total_profit_received, 2) as profit_received_eur,
                  round(total_profit_volume, 2) as profit_by_volume_organiser_rule_eur,
                  round(total_profit_cost, 2) as profit_by_cost_santaka_rule_eur
              from semantic_view(
                  {{ this }}
-                 dimensions event.event_name, event.is_festival
-                 metrics profit.total_profit_volume, profit.total_profit_cost
+                 dimensions event.event_name, event.is_festival, event.agreed_attribution_rule
+                 metrics profit.total_profit_received, profit.total_profit_volume, profit.total_profit_cost
              )
-             order by profit_by_cost_santaka_rule_eur desc'
+             order by profit_received_eur desc'
     ),
     settlement_discrepancies as (
         question 'Does the organiser settlement statement match our figures?'

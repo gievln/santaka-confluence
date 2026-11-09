@@ -242,6 +242,9 @@ models:
       - name: share_basis
         data_type: varchar
         description: Contract wording for what the share applies to.
+      - name: agreed_attribution_rule
+        data_type: varchar
+        description: Cocktail split rule written into the contract (volume or cost); null = not agreed.
 
   - name: dim_venue
     description: Conformed venue dimension with coordinates, plus the '-1' unknown member.
@@ -402,7 +405,9 @@ models:
         description: Extra Santaka would receive under the cost rule.
 
   - name: fct_event_profit
-    description: Santaka profit per event under both attribution rules. Grain one row per event.
+    description: >
+      Santaka profit per event: as actually received per the organiser statement, under each split rule,
+      and under the contract's agreed rule. Grain one row per event.
     config:
       contract:
         enforced: true
@@ -426,6 +431,9 @@ models:
               arguments:
                 to: ref('dim_venue')
                 field: venue_xid
+      - name: agreed_attribution_rule
+        data_type: varchar
+        description: Cocktail split rule written into the contract (volume or cost); null = not agreed.
       - name: attributed_sales_volume_eur
         data_type: number(14,4)
       - name: attributed_sales_cost_eur
@@ -434,6 +442,9 @@ models:
         data_type: number(14,4)
       - name: revenue_share_cost_eur
         data_type: number(14,4)
+      - name: revenue_share_received_eur
+        data_type: number(14,4)
+        description: Share the organiser settlement statement actually pays.
       - name: cost_of_goods_eur
         data_type: number(14,4)
       - name: event_costs_eur
@@ -444,6 +455,12 @@ models:
       - name: profit_cost_eur
         data_type: number(14,4)
         description: Revenue share minus cost of goods minus event costs, cost rule.
+      - name: profit_received_eur
+        data_type: number(14,4)
+        description: Profit on what the organiser statement actually pays.
+      - name: profit_agreed_rule_eur
+        data_type: number(14,4)
+        description: Profit under the contract's agreed rule; null while no rule is agreed.
       - name: santaka_litres_served
         data_type: number(14,2)
       - name: tickets_sold

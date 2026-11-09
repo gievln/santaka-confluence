@@ -18,6 +18,7 @@ select
     ev.capacity_per_day::number(38, 0) as capacity_per_day,
     ev.revenue_share_pct::number(10, 6) as revenue_share_pct,
     ev.share_basis::varchar as share_basis,
+    ev.agreed_attribution_rule::varchar as agreed_attribution_rule,
 from
     {{ ref('event__event') }} as ev
 
@@ -36,4 +37,5 @@ select
     'Unknown'::varchar as indoor_outdoor,
     null::number(38, 0) as capacity_per_day,
     null::number(10, 6) as revenue_share_pct,
-    null::varchar as share_basis
+    null::varchar as share_basis,
+    null::varchar as agreed_attribution_rule

@@ -76,6 +76,9 @@ EVENT_COSTS = {  # per event: logistics, staff, branding, listing fee (EUR)
     "RP26": (400, 550, 750, 500),
 }
 
+# Cocktail split rule written into the contract ('volume' or 'cost'); none agreed yet, which is the point of the talk.
+ATTRIBUTION_RULE = {}
+
 REVENUE_SHARE = {"NG26": 0.35, "KVN26": 0.35, "KMV26": 0.32, "LO26": 0.30, "DN26": 0.30, "RP26": 0.32}
 
 DRINKS_PER_ATTENDEE = {"outdoor": 2.2, "indoor": 1.5}
@@ -215,8 +218,8 @@ def main():
     )
     write_csv(
         "santaka_contracts.csv",
-        ["event_code", "revenue_share_pct", "share_basis", "signed_on"],
-        [[e[0], REVENUE_SHARE[e[0]], "Santaka products, net sales excl. VAT",
+        ["event_code", "revenue_share_pct", "share_basis", "attribution_rule", "signed_on"],
+        [[e[0], REVENUE_SHARE[e[0]], "Santaka products, net sales excl. VAT", ATTRIBUTION_RULE.get(e[0], ""),
           (e[4] - timedelta(days=rng.randint(45, 120))).isoformat()] for e in EVENTS],
     )
     write_csv(

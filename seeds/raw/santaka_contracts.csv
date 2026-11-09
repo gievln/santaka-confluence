@@ -1,7 +1,7 @@
-event_code,revenue_share_pct,share_basis,signed_on
-NG26,0.35,"Santaka products, net sales excl. VAT",2026-05-11
-KVN26,0.35,"Santaka products, net sales excl. VAT",2026-05-14
-KMV26,0.32,"Santaka products, net sales excl. VAT",2026-03-10
-LO26,0.3,"Santaka products, net sales excl. VAT",2026-02-23
-DN26,0.3,"Santaka products, net sales excl. VAT",2026-05-28
-RP26,0.32,"Santaka products, net sales excl. VAT",2026-06-10
+event_code,revenue_share_pct,share_basis,attribution_rule,signed_on
+NG26,0.35,"Santaka products, net sales excl. VAT",,2026-05-11
+KVN26,0.35,"Santaka products, net sales excl. VAT",,2026-05-14
+KMV26,0.32,"Santaka products, net sales excl. VAT",,2026-03-10
+LO26,0.3,"Santaka products, net sales excl. VAT",,2026-02-23
+DN26,0.3,"Santaka products, net sales excl. VAT",,2026-05-28
+RP26,0.32,"Santaka products, net sales excl. VAT",,2026-06-10

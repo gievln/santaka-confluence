@@ -253,6 +253,8 @@ def ask_both(question: str) -> None:
 st.title("Dirbtinis intelektas atsako tiksliai tiek, kiek tikslūs yra jam pateikti duomenys")
 st.caption("Santaka – Kauno gėrimų gamintoja · 2026 m. vasaros koncertai ir festivaliai")
 
+st.toggle("Palyginti su sutvarkytais duomenimis", value=True, key="compare")
+
 button_columns = st.columns(len(SAMPLE_QUESTIONS) + 1)
 for column, (short, full) in zip(button_columns, SAMPLE_QUESTIONS.items()):
     if column.button(short, use_container_width=True):
@@ -261,17 +263,20 @@ if button_columns[-1].button("🔄 Iš naujo", use_container_width=True):
     st.session_state.history = {key: [] for key in PANELS}
     st.session_state.turns = []
 
-st.toggle("Palyginti su sutvarkytais duomenimis", value=True, key="compare")
-
 question = st.chat_input("Užduokite klausimą apie Santakos renginius…")
 if question:
     ask_both(question)
 
 if st.session_state.turns:
     latest = st.session_state.turns[-1]
+    # Switching the comparison on after a naive-only question asks the clean AI the same question.
+    for key in active_panels():
+        if key not in latest["answers"]:
+            with st.spinner(f"{PANELS[key]['title']}: galvoja…"):
+                latest["answers"][key] = ask_analyst(key, latest["question"])
     st.markdown(f"<div class='question'>❓ {latest['question']}</div>", unsafe_allow_html=True)
     domain = shared_domain(latest)
-    shown = [key for key in PANELS if key in latest["answers"]]
+    shown = [key for key in active_panels() if key in latest["answers"]]
     for key, column in zip(shown, st.columns(len(shown), gap="large")):
         with column:
             st.markdown(

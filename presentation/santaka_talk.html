@@ -121,6 +121,19 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .sw{display:inline-block;width:18px;height:18px;border-radius:4px}
 
+/* rivers: one shared animation that moves between the river scenes */
+.river-host{position:absolute;left:70px;top:150px;width:1460px;height:720px}
+.river-bubble{position:absolute;right:70px;bottom:46px;width:560px;opacity:0;transition:opacity .6s ease;color:var(--midnight);font-size:24px;line-height:1.4}
+.river-bubble.on{opacity:1}
+.gate{opacity:0;transition:opacity .4s ease}
+.gate.on{opacity:1}
+.gate.rise .post{animation:gaterise 1.2s cubic-bezier(.2,.9,.3,1.2)}
+.gate .post{transform-box:fill-box;transform-origin:center bottom}
+.gate.rise .pulse{animation:gatepulse 1.6s ease-out 2}
+.gate .pulse{opacity:0}
+@keyframes gaterise{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+@keyframes gatepulse{0%{r:12;opacity:.9}100%{r:110;opacity:0}}
+
 /* star schema */
 .star text{font-family:Roboto,"Segoe UI",system-ui,sans-serif}
 .star .node{transition:opacity .5s ease}
@@ -187,11 +200,11 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 </section>
 
 <!-- 3 · sources -->
-<section class="scene dark" id="s-sources" data-steps="5" style="padding:50px 70px">
+<section class="scene dark river-scene" id="s-sources" data-steps="5" style="padding:50px 70px">
   <div class="eyebrow">Duomenų šaltiniai · santaka – vieta, kur susilieja upės</div>
-  <h2 style="font-size:40px" id="sources-title">Iš kur Santaka gauna skaičius?</h2>
-  <svg class="river-svg" id="river-a" viewBox="0 0 1460 720" width="1460" height="720" style="position:absolute;left:70px;top:150px"></svg>
-  <div class="card river-bubble" id="bubble-a" style="position:absolute;right:70px;bottom:46px;width:520px;opacity:0;transition:opacity .6s ease;color:var(--midnight);font-size:24px;line-height:1.4">Duomenys jau surinkti viename ežere. <b>Paklauskime AI.</b></div>
+  <h2 style="font-size:40px" class="river-title">Iš kur Santaka gauna skaičius?</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Duomenys jau surinkti viename ežere. <b>Paklauskime AI.</b></div>
 </section>
 
 <!-- 4 · ask the AI -->
@@ -240,6 +253,13 @@ status          VOID   ← dar neištaisyta
   </div>
 </section>
 
+<section class="scene dark river-scene" id="s-r-bronze" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">Tie patys šaltiniai · bronze</div>
+  <h2 style="font-size:40px" class="river-title">Pirmasis filtras: visi šaltiniai kalba ta pačia kalba</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Vanduo šiek tiek skaidresnis: duomenys suprantami, bet klaidos dar liko.</div>
+</section>
+
 <!-- 7 · silver -->
 <section class="scene" id="s-silver">
   <div class="eyebrow">2-as filtras · silver</div>
@@ -266,6 +286,13 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
       </div>
     </div>
   </div>
+</section>
+
+<section class="scene dark river-scene" id="s-r-silver" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">Tie patys šaltiniai · silver</div>
+  <h2 style="font-size:40px" class="river-title">Antrasis filtras: dublikatai, atšaukimai ir PVM pašalinti</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Klaidos ištaisytos. Bet liko klausimas, kurio duomenys patys neišsprendžia…</div>
 </section>
 
 <!-- 8 · one drink -->
@@ -324,14 +351,6 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
   </div>
 </section>
 
-<!-- 9 · the same rivers, now with filters -->
-<section class="scene dark" id="s-filters" data-steps="2" style="padding:50px 70px">
-  <div class="eyebrow">Tie patys šaltiniai</div>
-  <h2 style="font-size:40px" id="filters-title">Tie patys septyni šaltiniai – dabar su filtrais</h2>
-  <svg class="river-svg" id="river-b" viewBox="0 0 1460 720" width="1460" height="720" style="position:absolute;left:70px;top:150px"></svg>
-  <div class="card river-bubble" id="bubble-b" style="position:absolute;right:70px;bottom:46px;width:560px;opacity:0;transition:opacity .6s ease;color:var(--midnight);font-size:24px;line-height:1.4">Ežeras skaidrus. Kad AI suprastų, kas jame yra, liko du žingsniai: <b>struktūra ir prasmė</b>.</div>
-</section>
-
 <!-- 10 · gold: Kimball star -->
 <section class="scene" id="s-gold">
   <div class="eyebrow">3-as filtras · gold</div>
@@ -350,10 +369,17 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
   </div>
 </section>
 
+<section class="scene dark river-scene" id="s-r-gold" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">Tie patys šaltiniai · gold</div>
+  <h2 style="font-size:40px" class="river-title">Trečiasis filtras: aiški struktūra</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Duomenys sudėti taip, kad juos suprastų ir žmogus, ir mašina.</div>
+</section>
+
 <!-- 11 · semantic layer -->
 <section class="scene" id="s-semantic">
-  <div class="eyebrow">Prasmė · semantinis sluoksnis</div>
-  <h2>Ką reiškia žodžiai – aprašyta vieną kartą</h2>
+  <div class="eyebrow">4-as filtras · platinum</div>
+  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Prasmė: ką reiškia žodžiai – aprašyta vieną kartą</h2><span class="live">Gyvai: Snowflake</span></div>
   <div class="terms">
     <div class="term-card" data-step="1"><div class="w">Pelnas</div><div class="syn">pelningumas, uždarbis, profit</div><div class="def">Santakos dalis − savikaina − renginio išlaidos. Visada Santakos, ne organizatoriaus.</div></div>
     <div class="term-card" data-step="2"><div class="w">Renginys</div><div class="syn">festivalis, koncertas, event</div><div class="def">Šeši 2026 m. vasaros renginiai. Festivalis – ilgesnis nei viena diena.</div></div>
@@ -361,6 +387,13 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
     <div class="term-card rule" data-step="4"><div class="w">Sutarta taisyklė</div><div class="syn">sutarties sąlyga</div><div class="def">Sutartyje nenurodyta, todėl AI turi tai pasakyti, o ne pasirinkti pats.</div></div>
   </div>
   <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką AI laikys tiesa.</div>
+</section>
+
+<section class="scene dark river-scene" id="s-r-platinum" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">Tie patys šaltiniai · platinum</div>
+  <h2 style="font-size:40px" class="river-title">Ketvirtasis filtras: prasmė. Ežeras skaidrus.</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Dabar paklauskime AI dar kartą – <b>to paties klausimo</b>.</div>
 </section>
 
 <!-- 12 · the same question, two AIs -->
@@ -395,6 +428,7 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
   <div class="card" style="margin-top:20px"><p>Lankytojai × oras × kalendorius → kiek Santakos gėrimų atvežti į kitą renginį.</p>
   <p class="muted">Tikri 2026 m. vasaros Kauno orai. Bus sukurta vėliau.</p></div>
 </section>
+
 <section class="scene" id="s-ladder">
   <span class="draft">juodraštis</span>
   <div class="eyebrow">Kur esate jūs?</div>
@@ -464,7 +498,7 @@ function solveBoard(scene, layers) {
   });
 }
 
-/* ---------- rivers: reusable animation (sources → one channel → three filters → lake) ---------- */
+/* ---------- rivers: one shared animation; each medallion adds a filter and clears the water ---------- */
 const SOURCES = [
   ["KasaPro kasos · Garso Bangos", "GB-KMV26-0627-000001, SPRITZ, 1, 11.00, card, sale – kaina su PVM; ta pati eilutė kartais atkeliauja du kartus"],
   ["BarFlow kasos · Arena Events", "BF0000013, 2004, SANTAKA MIDUS 50 ML, 496 ct, KORTELE, VOID – centais, be PVM, atšaukti čekiai lieka"],
@@ -475,25 +509,33 @@ const SOURCES = [
   ["Organizatoriaus atsiskaitymas", "GB-NG26, Santaka Spritz, 4721 vnt., €20 360, 35 %, €7 126 – jų skaičiavimas"],
 ];
 const CONFLUENCE = [660, 330], LAKE_IN = [1170, 330];
-const GATES = [{ f: .18, t: "Suvienodinti", d: "bronze" }, { f: .50, t: "Išvalyti", d: "silver" }, { f: .82, t: "Aprašyti", d: "gold" }];
-const DEBRIS = ["×2", "VOID", "+PVM", "?", "SPRITZ?"];
+const GATES = [
+  { f: .14, t: "Suvienodinti", d: "bronze", c: "#B87333" },
+  { f: .38, t: "Išvalyti", d: "silver", c: "#A8B2BD" },
+  { f: .62, t: "Aprašyti", d: "gold", c: "#D4AF37" },
+  { f: .86, t: "Prasmė", d: "platinum", c: "#E5E4E2" },
+];
+/* each piece of debris belongs to the layer whose filter removes it */
+const DEBRIS = [["ct", 0], ["13.06", 0], ["„24,00“", 0], ["×2", 1], ["VOID", 1], ["+PVM", 1], ["SPRITZ?", 1], ["?", 2], ["pelnas?", 3]];
+const LAKE_STATE = ["drumstas", "šiek tiek skaidresnis", "skaidresnis", "beveik skaidrus", "skaidrus"];
 const MUD = [139, 107, 61], CLEAR = [79, 163, 224];
 const NS = "http://www.w3.org/2000/svg";
 const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([a, v]) => e.setAttribute(a, v)); parent && parent.appendChild(e); return e; };
 const lerp = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+const rgb = t => `rgb(${lerp(MUD, CLEAR, t).join(",")})`;
 
-function createRiver(svg) {
-  const r = { visible: 0, filters: false, particles: [], groups: [], running: false };
-  const glow = mk("filter", { id: `glow-${svg.id}` }, mk("defs", {}, svg));
+function createRiver() {
+  const svg = mk("svg", { viewBox: "0 0 1460 720", width: 1460, height: 720 });
+  const r = { svg, visible: 0, level: 0, particles: [], groups: [], gates: [], running: false };
+  const glow = mk("filter", { id: "river-glow" }, mk("defs", {}, svg));
   mk("feGaussianBlur", { stdDeviation: 3, result: "b" }, glow);
   const merge = mk("feMerge", {}, glow);
   mk("feMergeNode", { in: "b" }, merge);
   mk("feMergeNode", { in: "SourceGraphic" }, merge);
-  const beds = mk("g", {}, svg), gates = mk("g", { opacity: 0, style: "transition:opacity .8s ease" }, svg);
-  r.lake = mk("ellipse", { cx: 1310, cy: 330, rx: 150, ry: 115, fill: "#8B6B3D", opacity: .9, style: "transition:fill 1.5s ease" }, svg);
+  const beds = mk("g", {}, svg), gateLayer = mk("g", {}, svg);
+  r.lake = mk("ellipse", { cx: 1310, cy: 330, rx: 150, ry: 115, fill: rgb(0), opacity: .9, style: "transition:fill 1.5s ease" }, svg);
   mk("text", { x: 1310, y: 322, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#fff" }, svg).textContent = "Duomenų ežeras";
   r.lakeSub = mk("text", { x: 1310, y: 350, "text-anchor": "middle", "font-size": 17, fill: "#fff", opacity: .85 }, svg);
-  r.lakeSub.textContent = "drumstas";
   const layer = mk("g", {}, svg);
   r.paths = SOURCES.map(([name, sample], i) => {
     const y = 40 + i * 98, d = `M 340 ${y} C 540 ${y}, 600 ${CONFLUENCE[1]}, ${CONFLUENCE[0]} ${CONFLUENCE[1]}`;
@@ -508,28 +550,35 @@ function createRiver(svg) {
   const mainD = `M ${CONFLUENCE[0]} ${CONFLUENCE[1]} L ${LAKE_IN[0]} ${LAKE_IN[1]}`;
   r.mainBed = mk("path", { d: mainD, fill: "none", stroke: "rgba(159,211,242,.22)", "stroke-width": 34, "stroke-linecap": "round", opacity: 0, style: "transition:opacity .6s ease" }, beds);
   r.main = mk("path", { d: mainD, fill: "none", stroke: "none" }, beds);
-  r.gates = gates;
   GATES.forEach(gt => {
-    const x = CONFLUENCE[0] + (LAKE_IN[0] - CONFLUENCE[0]) * gt.f;
-    mk("rect", { x: x - 5, y: CONFLUENCE[1] - 40, width: 10, height: 80, rx: 4, fill: "#F6A753" }, gates);
-    mk("text", { x, y: CONFLUENCE[1] - 54, "text-anchor": "middle", "font-size": 18, "font-weight": 700, fill: "#fff" }, gates).textContent = gt.t;
-    mk("text", { x, y: CONFLUENCE[1] + 66, "text-anchor": "middle", "font-size": 15, fill: "#BFD9F0" }, gates).textContent = gt.d;
+    const x = CONFLUENCE[0] + (LAKE_IN[0] - CONFLUENCE[0]) * gt.f, cy = CONFLUENCE[1];
+    const g = mk("g", { class: "gate" }, gateLayer);
+    mk("circle", { class: "pulse", cx: x, cy, r: 12, fill: "none", stroke: gt.c, "stroke-width": 4 }, g);
+    mk("rect", { class: "post", x: x - 6, y: cy - 42, width: 12, height: 84, rx: 4, fill: gt.c }, g);
+    mk("text", { x, y: cy - 56, "text-anchor": "middle", "font-size": 18, "font-weight": 700, fill: "#fff" }, g).textContent = gt.t;
+    mk("text", { x, y: cy + 68, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: gt.c }, g).textContent = gt.d;
+    r.gates.push(g);
   });
-  for (let n = 0; n < 150; n++) {
-    const debris = Math.random() < .12;
+  for (let n = 0; n < 160; n++) {
+    const debris = Math.random() < .14, kind = DEBRIS[n % DEBRIS.length];
     const el = debris
       ? mk("text", { "font-size": 15, "font-weight": 700, "text-anchor": "middle", fill: "#C8A26B" }, layer)
-      : mk("circle", { r: 5, fill: "#8B6B3D", filter: `url(#glow-${svg.id})` }, layer);
-    if (debris) el.textContent = DEBRIS[n % DEBRIS.length];
-    r.particles.push({ el, debris, src: n % SOURCES.length, stage: n % 2, t: Math.random(), speed: .0016 + Math.random() * .0016, gate: 1 + (n % 2), gone: false });
+      : mk("circle", { r: 5, fill: rgb(0), filter: "url(#river-glow)" }, layer);
+    if (debris) el.textContent = kind[0];
+    r.particles.push({ el, debris, layer: kind[1], src: n % SOURCES.length, stage: n % 2, t: Math.random(), speed: .0016 + Math.random() * .0016, gone: false });
   }
-  r.set = ({ visible, filters }) => {
-    r.visible = visible; r.filters = filters;
+  /* visible: how many sources show; level: how many filters are in (0–4); rise: index of a filter to animate in */
+  r.set = ({ visible, level, rise = -1 }) => {
+    r.visible = visible; r.level = level;
     r.groups.forEach((g, i) => g.setAttribute("opacity", i < visible ? 1 : 0));
     r.mainBed.setAttribute("opacity", visible ? 1 : 0);
-    r.gates.style.opacity = filters ? 1 : 0;
-    r.lake.setAttribute("fill", filters ? "#4FA3E0" : "#8B6B3D");
-    r.lakeSub.textContent = filters ? "skaidrus" : "drumstas";
+    r.gates.forEach((g, i) => {
+      g.classList.toggle("on", i < level);
+      g.classList.remove("rise");
+      if (i === rise) { void g.getBoundingClientRect(); g.classList.add("rise"); }
+    });
+    r.lake.setAttribute("fill", rgb(level / GATES.length));
+    r.lakeSub.textContent = LAKE_STATE[level];
   };
   const tick = () => {
     r.particles.forEach(p => {
@@ -538,11 +587,11 @@ function createRiver(svg) {
       const path = p.stage === 0 ? r.paths[p.src] : r.main;
       const pt = path.getPointAtLength(p.t * path.getTotalLength());
       const f = p.stage === 1 ? p.t : 0;
-      if (r.filters && p.debris && p.stage === 1 && f > GATES[p.gate].f) p.gone = true;
-      const clean = r.filters ? Math.min(1, Math.max(0, (f - GATES[0].f) / (GATES[2].f - GATES[0].f))) : 0;
+      if (p.debris && p.stage === 1 && p.layer < r.level && f > GATES[p.layer].f) p.gone = true;
+      const passed = GATES.filter((gt, i) => i < r.level && f > gt.f).length;
       p.el.setAttribute(p.debris ? "x" : "cx", pt.x);
       p.el.setAttribute(p.debris ? "y" : "cy", pt.y + (p.debris ? 5 : 0));
-      if (!p.debris) p.el.setAttribute("fill", `rgb(${lerp(MUD, CLEAR, clean).join(",")})`);
+      if (!p.debris) p.el.setAttribute("fill", rgb(passed / GATES.length));
       p.el.style.opacity = (p.gone || p.src >= r.visible) ? 0 : 1;
     });
     requestAnimationFrame(tick);
@@ -550,6 +599,15 @@ function createRiver(svg) {
   r.start = () => { if (!r.running) { r.running = true; tick(); } };
   return r;
 }
+
+let river;
+function riverScene(scene) {
+  river = river || createRiver();
+  scene.querySelector(".river-host").appendChild(river.svg);
+  river.start();
+}
+/* filter levels before → after the step-1 animation in each river scene */
+const RIVER_LEVELS = { "s-r-bronze": [0, 1], "s-r-silver": [1, 2], "s-r-gold": [2, 3], "s-r-platinum": [3, 4] };
 
 /* ---------- Kimball star ---------- */
 function buildStar() {
@@ -565,11 +623,8 @@ function buildStar() {
 }
 
 /* ---------- scene hooks: enter (once per visit) and step (every change) ---------- */
-let riverA, riverB;
 const enterHooks = {
   "s-ask": () => drawBars(document.getElementById("ask-bars"), NAIVE_PROFIT, [0, 38000]),
-  "s-sources": () => { riverA = riverA || createRiver(document.getElementById("river-a")); riverA.start(); },
-  "s-filters": () => { riverB = riverB || createRiver(document.getElementById("river-b")); riverB.start(); },
   "s-duo": () => {
     drawBars(document.getElementById("duo-naive"), NAIVE_PROFIT, [-4500, 36000]);
     drawBars(document.getElementById("duo-clean"), CLEAN_PROFIT, [-4500, 36000]);
@@ -577,9 +632,10 @@ const enterHooks = {
 };
 const hooks = {
   "s-sources": k => {
-    riverA.set({ visible: k >= 4 ? SOURCES.length : k, filters: false });
-    document.getElementById("sources-title").textContent = k >= 4 ? "Septyni šaltiniai, vienas ežeras – ir visi drumsti" : "Iš kur Santaka gauna skaičius?";
-    document.getElementById("bubble-a").style.opacity = k >= 5 ? 1 : 0;
+    const scene = document.getElementById("s-sources");
+    river.set({ visible: k >= 4 ? SOURCES.length : k, level: 0 });
+    scene.querySelector(".river-title").textContent = k >= 4 ? "Septyni šaltiniai, vienas ežeras – ir visi drumsti" : "Iš kur Santaka gauna skaičius?";
+    scene.querySelector(".river-bubble").classList.toggle("on", k >= 5);
   },
   "s-ask": k => growBars(document.getElementById("ask-bars"), k >= 1),
   "s-bronze": k => solveBoard(document.getElementById("s-bronze"), k >= 2 ? ["bronze"] : []),
@@ -597,10 +653,6 @@ const hooks = {
     if (k === 3) { seg("seg-santaka", netPct / 2, "Santaka €4,55"); seg("seg-other", netPct / 2, "kiti €4,55"); note.textContent = "Pagal tūrį: 75 ml iš 150 ml yra Santakos, taigi 50 %."; }
     if (k >= 4) { seg("seg-santaka", netPct * .75, "Santaka €6,82"); seg("seg-other", netPct * .25, "€2,27"); note.textContent = "Pagal ingredientų savikainą: €1,80 iš €2,40 yra Santakos, taigi 75 %."; }
   },
-  "s-filters": k => {
-    riverB.set({ visible: SOURCES.length, filters: k >= 1 });
-    document.getElementById("bubble-b").style.opacity = k >= 2 ? 1 : 0;
-  },
   "s-gold": k => {
     document.getElementById("star-fact").setAttribute("opacity", k >= 1 ? 1 : 0);
     document.getElementById("star-dims").setAttribute("opacity", k >= 2 ? 1 : 0);
@@ -610,6 +662,15 @@ const hooks = {
     growBars(document.getElementById("duo-clean"), k >= 2);
   },
 };
+
+/* river scenes share one animation: attach it on enter, then set sources and filter level per step */
+document.querySelectorAll(".river-scene").forEach(scene => { enterHooks[scene.id] = () => riverScene(scene); });
+Object.entries(RIVER_LEVELS).forEach(([id, [from, to]]) => {
+  hooks[id] = k => {
+    river.set({ visible: SOURCES.length, level: k >= 1 ? to : from, rise: k === 1 ? to - 1 : -1 });
+    document.getElementById(id).querySelector(".river-bubble").classList.toggle("on", k >= 2);
+  };
+});
 
 /* ---------- engine: scenes, steps, keys, URL hash, scaling ---------- */
 const stage = document.getElementById("stage");

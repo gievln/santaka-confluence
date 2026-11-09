@@ -8,3 +8,4 @@ __pycache__/
 dbt_internal_packages/
 .user.yml
 profiles.yml
+streamlit/output/

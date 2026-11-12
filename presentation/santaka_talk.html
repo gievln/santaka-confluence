@@ -189,6 +189,23 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .model p.no b{color:var(--other)}
 .model p.yes{color:var(--good);font-weight:700}
 
+/* medallion: gates morph from the river channel into stacked layers */
+.medal{position:absolute;left:var(--gx);top:438px;width:12px;height:84px;border-radius:4px;background:var(--c);
+  transition:left 1.1s cubic-bezier(.5,0,.2,1) var(--d),top 1.1s cubic-bezier(.5,0,.2,1) var(--d),width 1.1s cubic-bezier(.5,0,.2,1) var(--d),height 1.1s cubic-bezier(.5,0,.2,1) var(--d),border-radius 1.1s ease var(--d)}
+#s-medallion.stacked .medal{left:150px;top:var(--top);width:780px;height:104px;border-radius:14px}
+.medal .txt{position:absolute;inset:0;display:flex;align-items:center;gap:22px;padding:0 28px;opacity:0;transition:opacity .5s ease;color:var(--midnight);white-space:nowrap;overflow:hidden}
+#s-medallion.stacked .medal .txt{opacity:1;transition-delay:calc(var(--d) + 1s)}
+.medal .txt b{font-size:30px;text-transform:uppercase;letter-spacing:.06em;min-width:200px}
+.medal .txt .verb{font-size:22px;font-weight:700;min-width:150px}
+.medal .txt .line{font-size:19px;white-space:normal;line-height:1.3}
+.medal-axis{position:absolute;left:96px;top:196px;height:470px;width:30px;border-left:3px solid rgba(159,211,242,.5);opacity:0;transition:opacity .6s ease 1.4s}
+.medal-axis::before{content:"";position:absolute;left:-10px;top:-4px;border:8px solid transparent;border-bottom:14px solid rgba(159,211,242,.8);border-top:0}
+.medal-axis span{position:absolute;left:-20px;top:50%;transform:rotate(-90deg) translateX(-50%);transform-origin:left top;white-space:nowrap;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:#9FD3F2}
+#s-medallion.stacked .medal-axis{opacity:1}
+.medal-def{position:absolute;left:980px;right:70px;top:196px;font-size:24px;line-height:1.45;color:#D6E6F5}
+.medal-def b{color:#fff}
+.medal-ask.shown{opacity:1}
+
 /* stack: how the demo is built */
 .stack{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:26px}
 .stack .arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)}
@@ -615,11 +632,32 @@ Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
   <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką D.I. laikys tiesa.</div>
 </section>
 
-<section class="scene dark river-scene" id="s-r-platinum" data-steps="2" style="padding:50px 70px">
+<section class="scene dark river-scene" id="s-r-platinum" data-steps="1" style="padding:50px 70px">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · platinum</div>
   <h2 style="font-size:40px" class="river-title">Ketvirtasis filtras: prasmė. Ežeras skaidrus.</h2>
   <div class="river-host"></div>
   <div class="card river-bubble">Dabar paklauskime D.I. dar kartą – <b>to paties klausimo</b>.</div>
+</section>
+
+<!-- medallion: the four filters stack into layers -->
+<section class="scene dark" id="s-medallion" style="padding:50px 70px">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · medaliono architektūra</div>
+  <h2 style="font-size:40px">Keturi filtrai – tai keturi duomenų sluoksniai</h2>
+  <div class="medal-axis"><span>švariau, vertingiau</span></div>
+  <div class="medal" data-i="0" style="--gx:795px;--top:562px;--c:#B87333;--d:0.36s">
+    <div class="txt"><b>bronze</b><span class="verb">Suvienodinti</span><span class="line">Kiekvienas šaltinis atskirai – tik sutvarkyti tipai ir formatai.</span></div>
+  </div>
+  <div class="medal" data-i="1" style="--gx:918px;--top:440px;--c:#A8B2BD;--d:0.24s">
+    <div class="txt"><b>silver</b><span class="verb">Išvalyti</span><span class="line">Klaidos ištaisytos, verslo taisyklės vienoje vietoje.</span></div>
+  </div>
+  <div class="medal" data-i="2" style="--gx:1040px;--top:318px;--c:#D4AF37;--d:0.12s">
+    <div class="txt"><b>gold</b><span class="verb">Aprašyti</span><span class="line">Fiksuota žvaigždės struktūra su automatiniais patikrinimais.</span></div>
+  </div>
+  <div class="medal" data-i="3" style="--gx:1163px;--top:196px;--c:#E5E4E2;--d:0.00s">
+    <div class="txt"><b>platinum</b><span class="verb">Prasmė</span><span class="line">Žodžiai ir taisyklės aprašyti taip, kad suprastų D.I.</span></div>
+  </div>
+  <div class="medal-def" data-step="1"><b>Medaliono architektūra:</b> duomenys kyla per sluoksnius, ir kiekvienas paskesnis yra švaresnis ir vertingesnis už ankstesnį. Klasikinė turi tris sluoksnius – bronze, silver, gold; mes pridėjome ketvirtą: prasmę D.I.</div>
+  <div class="card river-bubble medal-ask" data-step="2">Dabar paklauskime D.I. dar kartą – <b>to paties klausimo</b>.</div>
 </section>
 
 <!-- 12 · the same question, two AIs -->
@@ -918,6 +956,12 @@ const enterHooks = {
     drawBars(document.getElementById("duo-naive"), NAIVE_PROFIT, [-4500, 36000]);
     drawBars(document.getElementById("duo-clean"), CLEAN_PROFIT, [-4500, 36000]);
   },
+};
+enterHooks["s-medallion"] = () => {
+  const scene = document.getElementById("s-medallion");
+  scene.classList.remove("stacked");
+  void scene.getBoundingClientRect();
+  setTimeout(() => scene.classList.add("stacked"), 400);
 };
 const hooks = {
   "s-sources": k => {

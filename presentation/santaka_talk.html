@@ -571,12 +571,71 @@ Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · silver</div>
   <h2 style="font-size:40px" class="river-title">Antrasis filtras: dublikatai, atšaukimai ir PVM pašalinti</h2>
   <div class="river-host"></div>
-  <div class="card river-bubble">Klaidos ištaisytos. Bet liko klausimas, kurio duomenys patys neišsprendžia…</div>
+  <div class="card river-bubble">Klaidos ištaisytos, duomenys sudėlioti į žvaigždę. Toliau – užfiksuoti struktūrą.</div>
+</section>
+
+<!-- gold: the contract -->
+<section class="scene" id="s-gold">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · 3-as filtras: gold</div>
+  <h2>Aprašyti: struktūra, kuri nesikeičia be įspėjimo</h2>
+  <div class="contract" data-step="1">
+    <div class="contract-head">Renginio pelnas <span>· viena eilutė vienam renginiui</span></div>
+    <table>
+      <thead><tr><th>Stulpelis</th><th>Tipas</th><th>Automatinis patikrinimas</th></tr></thead>
+      <tbody>
+        <tr><td><b>renginys</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ unikalus</span><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>vieta</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ yra vietų sąraše</span></td></tr>
+        <tr><td><b>pelnas (faktiškai gauta)</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>pelnas pagal tūrį</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>pelnas pagal savikainą</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>sutarta taisyklė</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ tik „tūris“ arba „savikaina“</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" data-step="3" style="margin-top:24px">Kiekvieną kartą perskaičiuojant duomenis vyksta per 100 automatinių patikrinimų. Jei kas nors pasikeičia, pirmi sužinome mes – ne D.I.</div>
+</section>
+
+<section class="scene dark river-scene" id="s-r-gold" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · gold</div>
+  <h2 style="font-size:40px" class="river-title">Trečiasis filtras: aiški struktūra</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Struktūra užfiksuota ir patikrinta – ja galima pasikliauti.</div>
+</section>
+
+<!-- 11 · semantic layer -->
+<section class="scene" id="s-semantic">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · 4-as filtras: platinum</div>
+  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Prasmė: ką reiškia žodžiai – aprašyta vieną kartą</h2><span class="live">Gyvai: Snowflake</span></div>
+  <div class="terms">
+    <div class="term-card" data-step="1"><div class="w">Pelnas</div><div class="syn">pelningumas, uždarbis, profit</div><div class="def">Santakos dalis − savikaina − renginio išlaidos. Visada Santakos, ne organizatoriaus.</div></div>
+    <div class="term-card" data-step="2"><div class="w">Renginys</div><div class="syn">festivalis, koncertas, event</div><div class="def">Šeši 2026 m. vasaros renginiai. Festivalis – ilgesnis nei viena diena.</div></div>
+    <div class="term-card" data-step="3"><div class="w">Pardavimai</div><div class="syn">apyvarta, pajamos</div><div class="def">Visada be PVM ir po nuolaidų. VIP kvietimais išduoti gėrimai – €0.</div></div>
+    <div class="term-card rule" data-step="4"><div class="w">Kai atsakymas neaiškus</div><div class="syn">nesutarti apibrėžimai</div><div class="def">Jei sutartis ko nors nenurodo, D.I. turi tai pasakyti, o ne pasirinkti pats.</div></div>
+  </div>
+  <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką D.I. laikys tiesa.</div>
+</section>
+
+<section class="scene dark river-scene" id="s-r-platinum" data-steps="2" style="padding:50px 70px">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · platinum</div>
+  <h2 style="font-size:40px" class="river-title">Ketvirtasis filtras: prasmė. Ežeras skaidrus.</h2>
+  <div class="river-host"></div>
+  <div class="card river-bubble">Dabar paklauskime D.I. dar kartą – <b>to paties klausimo</b>.</div>
+</section>
+
+<!-- 12 · the same question, two AIs -->
+<section class="scene" id="s-duo">
+  <div class="eyebrow">6 · Tas pats klausimas – du D.I.</div>
+  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Kurie renginiai Santakai buvo pelningiausi?</h2><span class="live">Gyvai</span></div>
+  <div class="duo" style="margin-top:26px">
+    <div data-step="1"><span class="side-title" style="background:#C0392B">Tiesiai iš eksportų</span><div class="hbars" id="duo-naive"></div></div>
+    <div data-step="2"><span class="side-title" style="background:#1E8449">Sutvarkyti duomenys</span><div class="hbars" id="duo-clean"></div></div>
+  </div>
+  <div class="callout" data-step="3" style="margin-top:26px">„Lina ir orkestras“ – nuostolingas. „Kauno Vasaros Naktys“ – pelnas ar nuostolis priklauso nuo taisyklės. <span class="muted">Toliau gyvai: atsiskaitymas ir kokteiliai.</span></div>
 </section>
 
 <!-- 8 · one drink -->
 <section class="scene" id="s-drink">
-  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · kokteilio taisyklė</div>
+  <div class="eyebrow">7 · Ką gali nuspręsti tik žmonės · kokteilio taisyklė</div>
   <h2>Taisyklės, kurių nenusprendžia D.I.</h2>
   <p class="muted" id="drink-lede" style="font-size:26px">Duomenys jau švarūs. Bet į kai kuriuos klausimus duomenys patys neatsako.</p>
   <div class="spritz">
@@ -628,69 +687,10 @@ Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
   </div>
 </section>
 
-<!-- gold: the contract -->
-<section class="scene" id="s-gold">
-  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · 3-as filtras: gold</div>
-  <h2>Aprašyti: struktūra, kuri nesikeičia be įspėjimo</h2>
-  <div class="contract" data-step="1">
-    <div class="contract-head">Renginio pelnas <span>· viena eilutė vienam renginiui</span></div>
-    <table>
-      <thead><tr><th>Stulpelis</th><th>Tipas</th><th>Automatinis patikrinimas</th></tr></thead>
-      <tbody>
-        <tr><td><b>renginys</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ unikalus</span><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
-        <tr><td><b>vieta</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ yra vietų sąraše</span></td></tr>
-        <tr><td><b>pelnas (faktiškai gauta)</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
-        <tr><td><b>pelnas pagal tūrį</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
-        <tr><td><b>pelnas pagal savikainą</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
-        <tr><td><b>sutarta taisyklė</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ tik „tūris“ arba „savikaina“</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="callout" data-step="3" style="margin-top:24px">Kiekvieną kartą perskaičiuojant duomenis vyksta per 100 automatinių patikrinimų. Jei kas nors pasikeičia, pirmi sužinome mes – ne D.I.</div>
-</section>
-
-<section class="scene dark river-scene" id="s-r-gold" data-steps="2" style="padding:50px 70px">
-  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · gold</div>
-  <h2 style="font-size:40px" class="river-title">Trečiasis filtras: aiški struktūra</h2>
-  <div class="river-host"></div>
-  <div class="card river-bubble">Struktūra užfiksuota ir patikrinta – ja galima pasikliauti.</div>
-</section>
-
-<!-- 11 · semantic layer -->
-<section class="scene" id="s-semantic">
-  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · 4-as filtras: platinum</div>
-  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Prasmė: ką reiškia žodžiai – aprašyta vieną kartą</h2><span class="live">Gyvai: Snowflake</span></div>
-  <div class="terms">
-    <div class="term-card" data-step="1"><div class="w">Pelnas</div><div class="syn">pelningumas, uždarbis, profit</div><div class="def">Santakos dalis − savikaina − renginio išlaidos. Visada Santakos, ne organizatoriaus.</div></div>
-    <div class="term-card" data-step="2"><div class="w">Renginys</div><div class="syn">festivalis, koncertas, event</div><div class="def">Šeši 2026 m. vasaros renginiai. Festivalis – ilgesnis nei viena diena.</div></div>
-    <div class="term-card" data-step="3"><div class="w">Pagal tūrį · pagal savikainą</div><div class="syn">kokteilio dalijimo taisyklės</div><div class="def">Kai klausiama nenurodant taisyklės, rodyti abu atsakymus šalia vienas kito.</div></div>
-    <div class="term-card rule" data-step="4"><div class="w">Sutarta taisyklė</div><div class="syn">sutarties sąlyga</div><div class="def">Sutartyje nenurodyta, todėl D.I. turi tai pasakyti, o ne pasirinkti pats.</div></div>
-  </div>
-  <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką D.I. laikys tiesa.</div>
-</section>
-
-<section class="scene dark river-scene" id="s-r-platinum" data-steps="2" style="padding:50px 70px">
-  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · platinum</div>
-  <h2 style="font-size:40px" class="river-title">Ketvirtasis filtras: prasmė. Ežeras skaidrus.</h2>
-  <div class="river-host"></div>
-  <div class="card river-bubble">Dabar paklauskime D.I. dar kartą – <b>to paties klausimo</b>.</div>
-</section>
-
-<!-- 12 · the same question, two AIs -->
-<section class="scene" id="s-duo">
-  <div class="eyebrow">6 · Tas pats klausimas – du D.I.</div>
-  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Kurie renginiai Santakai buvo pelningiausi?</h2><span class="live">Gyvai</span></div>
-  <div class="duo" style="margin-top:26px">
-    <div data-step="1"><span class="side-title" style="background:#C0392B">Tiesiai iš eksportų</span><div class="hbars" id="duo-naive"></div></div>
-    <div data-step="2"><span class="side-title" style="background:#1E8449">Sutvarkyti duomenys</span><div class="hbars" id="duo-clean"></div></div>
-  </div>
-  <div class="callout" data-step="3" style="margin-top:26px">„Lina ir orkestras“ – nuostolingas. „Kauno Vasaros Naktys“ – pelnas ar nuostolis priklauso nuo taisyklės. <span class="muted">Toliau gyvai: atsiskaitymas ir kokteiliai.</span></div>
-</section>
-
 <!-- 13 · twist -->
 <section class="scene" id="s-twist">
   <div class="eyebrow">7 · Ką gali nuspręsti tik žmonės · posūkis</div>
-  <h2>Net švarūs duomenys duoda du atsakymus</h2>
+  <h2>Ką tai reiškia visam renginiui</h2>
   <p class="muted">Kauno Vasaros Naktys, Santakos pelnas:</p>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:10px">
     <div class="card" data-step="1" style="border-top:6px solid var(--bad)"><div class="eyebrow" style="color:var(--muted)">Pagal tūrį · organizatoriaus taisyklė</div><div class="counter-big" style="color:var(--bad)">−€751</div></div>

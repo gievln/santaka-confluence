@@ -190,9 +190,10 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .model p.yes{color:var(--good);font-weight:700}
 
 /* medallion: gates morph from the river channel into stacked layers */
-.medal{position:absolute;left:var(--gx);top:438px;width:12px;height:84px;border-radius:4px;background:var(--c);
-  transition:left 1.1s cubic-bezier(.5,0,.2,1) var(--d),top 1.1s cubic-bezier(.5,0,.2,1) var(--d),width 1.1s cubic-bezier(.5,0,.2,1) var(--d),height 1.1s cubic-bezier(.5,0,.2,1) var(--d),border-radius 1.1s ease var(--d)}
-#s-medallion.stacked .medal{left:150px;top:var(--top);width:780px;height:104px;border-radius:14px}
+.medal{position:absolute;left:150px;top:var(--top);width:780px;height:104px;border-radius:14px;background:var(--c);
+  transform-origin:0 0;transform:translate(var(--tx),var(--ty)) scale(.0154,.8077);will-change:transform;
+  transition:transform 1.1s cubic-bezier(.5,0,.2,1) var(--d)}
+#s-medallion.stacked .medal{transform:none}
 .medal .txt{position:absolute;inset:0;display:flex;align-items:center;gap:22px;padding:0 28px;opacity:0;transition:opacity .5s ease;color:var(--midnight);white-space:nowrap;overflow:hidden}
 #s-medallion.stacked .medal .txt{opacity:1;transition-delay:calc(var(--d) + 1s)}
 .medal .txt b{font-size:30px;text-transform:uppercase;letter-spacing:.06em;min-width:200px}
@@ -644,16 +645,16 @@ Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · medaliono architektūra</div>
   <h2 style="font-size:40px">Keturi filtrai – tai keturi duomenų sluoksniai</h2>
   <div class="medal-axis"><span>švariau, vertingiau</span></div>
-  <div class="medal" data-i="0" style="--gx:795px;--top:562px;--c:#B87333;--d:0.36s">
+  <div class="medal" data-i="0" style="--tx:645px;--ty:-124px;--top:562px;--c:#B87333;--d:0.36s">
     <div class="txt"><b>bronze</b><span class="verb">Suvienodinti</span><span class="line">Kiekvienas šaltinis atskirai – tik sutvarkyti tipai ir formatai.</span></div>
   </div>
-  <div class="medal" data-i="1" style="--gx:918px;--top:440px;--c:#A8B2BD;--d:0.24s">
+  <div class="medal" data-i="1" style="--tx:768px;--ty:-2px;--top:440px;--c:#A8B2BD;--d:0.24s">
     <div class="txt"><b>silver</b><span class="verb">Išvalyti</span><span class="line">Klaidos ištaisytos, verslo taisyklės vienoje vietoje.</span></div>
   </div>
-  <div class="medal" data-i="2" style="--gx:1040px;--top:318px;--c:#D4AF37;--d:0.12s">
+  <div class="medal" data-i="2" style="--tx:890px;--ty:120px;--top:318px;--c:#D4AF37;--d:0.12s">
     <div class="txt"><b>gold</b><span class="verb">Aprašyti</span><span class="line">Fiksuota žvaigždės struktūra su automatiniais patikrinimais.</span></div>
   </div>
-  <div class="medal" data-i="3" style="--gx:1163px;--top:196px;--c:#E5E4E2;--d:0.00s">
+  <div class="medal" data-i="3" style="--tx:1013px;--ty:242px;--top:196px;--c:#E5E4E2;--d:0.00s">
     <div class="txt"><b>platinum</b><span class="verb">Prasmė</span><span class="line">Žodžiai ir taisyklės aprašyti taip, kad suprastų D.I.</span></div>
   </div>
   <div class="medal-def" data-step="1"><b>Medaliono architektūra:</b> duomenys kyla per sluoksnius, ir kiekvienas paskesnis yra švaresnis ir vertingesnis už ankstesnį. Klasikinė turi tris sluoksnius – bronze, silver, gold; mes pridėjome ketvirtą: prasmę D.I.</div>
@@ -862,7 +863,7 @@ function createRiver() {
   r.lake = mk("ellipse", { cx: 1310, cy: 345, rx: 150, ry: 105, fill: rgb(0), opacity: .9, style: "transition:fill 1.5s ease" }, r.lakeGroup);
   mk("text", { x: 1310, y: 340, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#fff" }, r.lakeGroup).textContent = "Duomenų ežeras";
   r.lakeSub = mk("text", { x: 1310, y: 366, "text-anchor": "middle", "font-size": 17, fill: "#fff", opacity: .85 }, r.lakeGroup);
-  const layer = mk("g", {}, svg);
+  const layer = mk("g", { filter: "url(#river-glow)" }, svg);
   r.paths = SOURCES.map(([name, sample], i) => {
     const y = 40 + i * 98, d = `M 340 ${y} C 540 ${y}, 600 ${CONFLUENCE[1]}, ${CONFLUENCE[0]} ${CONFLUENCE[1]}`;
     const g = mk("g", { opacity: 0, style: "transition:opacity .6s ease" }, beds);
@@ -889,7 +890,7 @@ function createRiver() {
     const debris = Math.random() < .14, kind = DEBRIS[n % DEBRIS.length];
     const el = debris
       ? mk("text", { "font-size": 15, "font-weight": 700, "text-anchor": "middle", fill: "#C8A26B" }, layer)
-      : mk("circle", { r: 5, fill: rgb(0), filter: "url(#river-glow)" }, layer);
+      : mk("circle", { r: 5, fill: rgb(0) }, layer);
     if (debris) el.textContent = kind[0];
     r.particles.push({ el, debris, layer: kind[1], src: n % SOURCES.length, stage: n % 2, t: Math.random(), speed: .0016 + Math.random() * .0016, gone: false });
   }
@@ -907,12 +908,15 @@ function createRiver() {
     r.lake.setAttribute("fill", rgb(level / GATES.length));
     r.lakeSub.textContent = LAKE_STATE[level];
   };
+  const SAMPLES = 240;
+  const sample = path => { const len = path.getTotalLength(); return Array.from({ length: SAMPLES + 1 }, (_, i) => path.getPointAtLength(len * i / SAMPLES)); };
   const tick = () => {
     r.particles.forEach(p => {
       p.t += p.speed;
       if (p.t >= 1) { p.t = 0; p.stage = 1 - p.stage; if (p.stage === 0) p.gone = false; }
-      const path = p.stage === 0 ? r.paths[p.src] : r.main;
-      const pt = path.getPointAtLength(p.t * path.getTotalLength());
+      const pts = p.stage === 0 ? r.pathPoints[p.src] : r.mainPoints;
+      const x = p.t * SAMPLES, i = Math.floor(x), a = pts[i], b = pts[Math.min(i + 1, SAMPLES)], u = x - i;
+      const pt = { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
       const f = p.stage === 1 ? p.t : 0;
       if (p.debris && p.stage === 1 && p.layer < r.level && f > GATES[p.layer].f) p.gone = true;
       const passed = GATES.filter((gt, i) => i < r.level && f > gt.f).length;
@@ -921,9 +925,14 @@ function createRiver() {
       if (!p.debris) p.el.setAttribute("fill", rgb(passed / GATES.length));
       p.el.style.opacity = (p.gone || p.src >= r.visible) ? 0 : 1;
     });
-    requestAnimationFrame(tick);
+    if (r.running) r.raf = requestAnimationFrame(tick);
   };
-  r.start = () => { if (!r.running) { r.running = true; tick(); } };
+  r.start = () => {
+    /* sample once the svg is in the document; detached paths report no length */
+    if (!r.mainPoints) { r.pathPoints = r.paths.map(sample); r.mainPoints = sample(r.main); }
+    if (!r.running) { r.running = true; r.raf = requestAnimationFrame(tick); }
+  };
+  r.pause = () => { r.running = false; cancelAnimationFrame(r.raf); };
   return r;
 }
 
@@ -1055,6 +1064,7 @@ let si = 0, k = 0;
 function render(entering) {
   scenes.forEach((s, i) => s.classList.toggle("active", i === si));
   const s = scenes[si];
+  if (entering && river && !s.classList.contains("river-scene")) river.pause();
   if (entering && enterHooks[s.id]) enterHooks[s.id]();
   s.querySelectorAll("[data-step]").forEach(e => e.classList.toggle("shown", +e.dataset.step <= k));
   if (hooks[s.id]) requestAnimationFrame(() => hooks[s.id](k));

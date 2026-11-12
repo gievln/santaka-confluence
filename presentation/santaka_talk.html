@@ -52,7 +52,7 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .title-meta{font-size:26px;color:#BFD9F0}
 
 /* agenda */
-.agenda{list-style:none;padding:0;margin:34px 0 0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:16px 40px;counter-reset:a}
+.agenda{list-style:none;padding:0;margin:34px 0 0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,auto);grid-auto-flow:column;gap:16px 40px;counter-reset:a}
 .agenda li{display:grid;grid-template-columns:58px 1fr;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;counter-increment:a}
 .agenda li::before{content:counter(a);width:48px;height:48px;border-radius:50%;background:var(--santaka);color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .agenda b{display:block;font-size:26px;color:var(--midnight);line-height:1.2}
@@ -148,6 +148,21 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 @keyframes gaterise{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
 @keyframes gatepulse{0%{r:12;opacity:.9}100%{r:110;opacity:0}}
 
+.payout{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.pay{background:#fff;border:1px solid var(--line);border-top:5px solid var(--santaka);border-radius:12px;padding:14px 18px}
+.pay .lbl{font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pay .row{font-size:28px;color:var(--midnight);margin-top:4px}
+.pay .row b{font-size:36px;color:var(--santaka)}
+
+.contract{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:24px}
+.contract-head{background:var(--dark);color:#fff;font-size:26px;font-weight:700;padding:14px 22px}
+.contract-head span{font-weight:400;font-size:19px;color:#BFD9F0}
+.contract table{width:100%;border-collapse:collapse}
+.contract th{text-align:left;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 22px;border-bottom:1px solid var(--line)}
+.contract td{padding:12px 22px;border-bottom:1px solid var(--line);font-size:23px;color:var(--midnight)}
+.contract td.type{color:var(--muted);font-size:20px}
+.contract .test{display:inline-block;margin-right:8px;font-size:17px;font-weight:700;color:var(--good);background:var(--good-t);border:1px solid var(--good);border-radius:999px;padding:3px 12px}
+
 /* stack: how the demo is built */
 .stack{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:26px}
 .stack .arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)}
@@ -217,7 +232,8 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
     <li style="--i:4"><div><b>Valome sluoksnis po sluoksnio</b><span>bronze · silver · gold · prasmė</span></div></li>
     <li style="--i:5" class="live-item"><div><b>Tas pats klausimas – du D.I.</b><span>neapdoroti ir sutvarkyti duomenys · gyvai</span></div></li>
     <li style="--i:6"><div><b>Ką gali nuspręsti tik žmonės</b><span>taisyklės ir duomenų valdysena</span></div></li>
-    <li style="--i:7"><div><b>Klausimai</b><span></span></div></li>
+    <li style="--i:7"><div><b>Kas toliau: prognozės</b><span>kai duomenimis galima pasitikėti</span></div></li>
+    <li style="--i:8"><div><b>Klausimai</b><span></span></div></li>
   </ol>
 </section>
 
@@ -286,7 +302,7 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
     <div class="arrow" data-step="3">→</div>
     <div class="tech-card" data-step="3">
       <h3>Semantinis sluoksnis</h3>
-      <div class="k">Kas tai</div><p>Aprašas AI: kokios yra lentelės, kaip jos susijusios, ką reiškia stulpeliai.</p>
+      <div class="k">Kas tai</div><p>Aprašas, skirtas D.I.: kokios yra lentelės, kaip jos susijusios, ką reiškia stulpeliai.</p>
       <div class="k demo">Demonstracijoje</div><p>Tik plonas aprašas ant neapdorotų lentelių.</p>
     </div>
     <div class="arrow" data-step="4">→</div>
@@ -302,7 +318,7 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
       <div class="k demo">Demonstracijoje</div><p>Tik langas į Cortex Analyst: klausimas įeina, lentelė ir grafikas išeina.</p>
     </div>
   </div>
-  <div class="callout accent" data-step="6" style="margin-top:28px">Jokio duomenų valymo – tik kopija ir aprašas. Būtent taip dažnai prasideda AI bandomieji projektai.</div>
+  <div class="callout accent" data-step="6" style="margin-top:28px">Jokio duomenų valymo – tik kopija ir aprašas. Būtent taip dažnai prasideda D.I. bandomieji projektai.</div>
 </section>
 
 <!-- 3b · the app is only a window onto Cortex Analyst -->
@@ -343,7 +359,7 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
   <div class="eyebrow">3 · Klausimai D.I. – naudojant originalius duomenis</div>
   <div class="big-q">Kurie renginiai Santakai buvo pelningiausi?</div>
   <div data-step="1">
-    <div style="display:flex;align-items:center;gap:18px;margin-top:18px"><span class="live">Gyvai</span><span class="muted" style="font-size:22px">AI atsakymas per kelias sekundes:</span></div>
+    <div style="display:flex;align-items:center;gap:18px;margin-top:18px"><span class="live">Gyvai</span><span class="muted" style="font-size:22px">D.I. atsakymas per kelias sekundes:</span></div>
     <div class="hbars" id="ask-bars"></div>
   </div>
   <div data-step="2" class="callout" style="margin-top:30px">Visi šeši renginiai pelningi. <b>Sustokime: ar galime tuo pasitikėti?</b></div>
@@ -419,6 +435,24 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
   </div>
 </section>
 
+<!-- silver: business entities and how they relate -->
+<section class="scene" id="s-star">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · silver: verslo esybės</div>
+  <h2>Išvalyti duomenys susidėlioja į aiškią struktūrą</h2>
+  <svg class="star" viewBox="0 0 1420 560" width="1420" height="560" style="margin-top:6px">
+    <g id="star-dims" class="node" opacity="0"></g>
+    <g id="star-fact" class="node" opacity="0">
+      <rect x="560" y="230" width="300" height="100" rx="16" fill="#0D5FA6"/>
+      <text x="710" y="272" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">Santakos pardavimai</text>
+      <text x="710" y="302" text-anchor="middle" font-size="17" fill="#D6E6F5">faktas · 48 501 eilutė</text>
+    </g>
+  </svg>
+  <div data-step="3" style="position:absolute;left:90px;right:90px;bottom:60px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:22px">
+    <span style="color:var(--midnight);font-weight:700">Kiti faktai naudoja tas pačias dimensijas:</span>
+    <span class="chip">Renginio pelnas</span><span class="chip">Bilietai</span><span class="chip">Išlaidos</span><span class="chip">Atsiskaitymo suderinimas</span>
+  </div>
+</section>
+
 <section class="scene dark river-scene" id="s-r-silver" data-steps="2" style="padding:50px 70px">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · silver</div>
   <h2 style="font-size:40px" class="river-title">Antrasis filtras: dublikatai, atšaukimai ir PVM pašalinti</h2>
@@ -429,9 +463,10 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
 <!-- 8 · one drink -->
 <section class="scene" id="s-drink">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · kokteilio taisyklė</div>
-  <h2>Santaka Spritz renginio bare kainuoja €11</h2>
+  <h2>Taisyklės, kurių nenusprendžia D.I.</h2>
+  <p class="muted" id="drink-lede" style="font-size:26px">Duomenys jau švarūs. Bet į kai kuriuos klausimus duomenys patys neatsako.</p>
   <div class="spritz">
-    <div class="glass-box">
+    <div class="glass-box" data-step="1">
       <svg viewBox="0 0 420 620" width="420" height="620" aria-label="Spritz taurė">
         <defs><clipPath id="bowl"><path d="M70 60 Q60 300 210 360 Q360 300 350 60 Z"/></clipPath></defs>
         <g clip-path="url(#bowl)">
@@ -451,12 +486,12 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
       </svg>
     </div>
     <div>
-      <div class="big-q" style="font-size:44px">Kiek iš šių €11 priklauso Santakai?</div>
-      <div class="guesses" id="guesses" data-step="1">
+      <div data-step="1"><div class="big-q" style="font-size:40px">Santaka Spritz kainuoja €11.<br>Kiek iš jų tenka Santakai?</div></div>
+      <div class="guesses" id="guesses" data-step="2">
         <div class="guess tabnum">€11,00</div><div class="guess tabnum">€9,09</div>
         <div class="guess tabnum">€8,25</div><div class="guess tabnum">€5,50</div>
       </div>
-      <div data-step="2" style="margin-top:34px">
+      <div data-step="3" style="margin-top:30px">
         <div class="price">
           <div class="seg" id="seg-vat" style="background:#9AA5B1">PVM €1,91</div>
           <div class="seg" id="seg-santaka" style="background:#0D5FA6"></div>
@@ -465,46 +500,46 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
         <div class="price-scale tabnum"><span>€0</span><span>€11</span></div>
         <div class="legend">
           <span><i class="sw" style="background:#9AA5B1"></i>PVM – valstybei</span>
-          <span><i class="sw" style="background:#0D5FA6"></i>Santaka</span>
+          <span><i class="sw" style="background:#0D5FA6"></i>Santakos pardavimai</span>
           <span><i class="sw" style="background:#C8701A"></i>Kiti tiekėjai</span>
         </div>
         <p class="muted" id="price-note" style="margin-top:14px"></p>
       </div>
-      <div data-step="5">
-        <div class="matrix tabnum">
-          <div></div><div class="h">pagal tūrį</div><div class="h">pagal savikainą</div>
-          <div class="h">su PVM</div><div class="c">€5,50</div><div class="c">€8,25</div>
-          <div class="h">be PVM</div><div class="c">€4,55</div><div class="c">€6,82</div>
-        </div>
+      <div class="payout" data-step="6">
+        <div class="pay"><div class="lbl">Pagal tūrį · organizatoriaus taisyklė</div><div class="row tabnum">€4,55 × 35 % = <b>€1,59</b></div></div>
+        <div class="pay"><div class="lbl">Pagal savikainą · Santakos taisyklė</div><div class="row tabnum">€6,82 × 35 % = <b>€2,39</b></div></div>
       </div>
-      <div data-step="6" class="err rule" style="margin-top:22px"><span class="mark">!</span><span>Kokteilio dalis Santakai – sutartyje neapibrėžta</span><span class="tag">taisyklė, ne klaida</span></div>
+      <div data-step="7" class="err rule" style="margin-top:18px"><span class="mark">!</span><span>Kokteilio dalis Santakai – sutartyje neapibrėžta</span><span class="tag">taisyklė, ne klaida</span></div>
     </div>
   </div>
 </section>
 
-<!-- 10 · gold: Kimball star -->
+<!-- gold: the contract -->
 <section class="scene" id="s-gold">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · 3-as filtras: gold</div>
-  <h2>Aprašyti: aiški struktūra, kurią supranta visi</h2>
-  <svg class="star" viewBox="0 0 1420 560" width="1420" height="560" style="margin-top:6px">
-    <g id="star-dims" class="node" opacity="0"></g>
-    <g id="star-fact" class="node" opacity="0">
-      <rect x="560" y="230" width="300" height="100" rx="16" fill="#0D5FA6"/>
-      <text x="710" y="272" text-anchor="middle" font-size="26" font-weight="700" fill="#fff">Santakos pardavimai</text>
-      <text x="710" y="302" text-anchor="middle" font-size="17" fill="#D6E6F5">faktas · 48 501 eilutė</text>
-    </g>
-  </svg>
-  <div data-step="3" style="position:absolute;left:90px;right:90px;bottom:60px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:22px">
-    <span style="color:var(--midnight);font-weight:700">Kiti faktai naudoja tas pačias dimensijas:</span>
-    <span class="chip">Renginio pelnas</span><span class="chip">Bilietai</span><span class="chip">Išlaidos</span><span class="chip">Atsiskaitymo suderinimas</span>
+  <h2>Aprašyti: struktūra, kuri nesikeičia be įspėjimo</h2>
+  <div class="contract" data-step="1">
+    <div class="contract-head">Renginio pelnas <span>· viena eilutė vienam renginiui</span></div>
+    <table>
+      <thead><tr><th>Stulpelis</th><th>Tipas</th><th>Automatinis patikrinimas</th></tr></thead>
+      <tbody>
+        <tr><td><b>renginys</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ unikalus</span><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>vieta</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ yra vietų sąraše</span></td></tr>
+        <tr><td><b>pelnas (faktiškai gauta)</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>pelnas pagal tūrį</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>pelnas pagal savikainą</b></td><td class="type">skaičius, €</td><td class="tests"><span class="test" data-step="2">✓ ne tuščias</span></td></tr>
+        <tr><td><b>sutarta taisyklė</b></td><td class="type">tekstas</td><td class="tests"><span class="test" data-step="2">✓ tik „tūris“ arba „savikaina“</span></td></tr>
+      </tbody>
+    </table>
   </div>
+  <div class="callout" data-step="3" style="margin-top:24px">Kiekvieną kartą perskaičiuojant duomenis vyksta per 100 automatinių patikrinimų. Jei kas nors pasikeičia, pirmi sužinome mes – ne D.I.</div>
 </section>
 
 <section class="scene dark river-scene" id="s-r-gold" data-steps="2" style="padding:50px 70px">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · gold</div>
   <h2 style="font-size:40px" class="river-title">Trečiasis filtras: aiški struktūra</h2>
   <div class="river-host"></div>
-  <div class="card river-bubble">Duomenys sudėti taip, kad juos suprastų ir žmogus, ir mašina.</div>
+  <div class="card river-bubble">Struktūra užfiksuota ir patikrinta – ja galima pasikliauti.</div>
 </section>
 
 <!-- 11 · semantic layer -->
@@ -515,16 +550,16 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
     <div class="term-card" data-step="1"><div class="w">Pelnas</div><div class="syn">pelningumas, uždarbis, profit</div><div class="def">Santakos dalis − savikaina − renginio išlaidos. Visada Santakos, ne organizatoriaus.</div></div>
     <div class="term-card" data-step="2"><div class="w">Renginys</div><div class="syn">festivalis, koncertas, event</div><div class="def">Šeši 2026 m. vasaros renginiai. Festivalis – ilgesnis nei viena diena.</div></div>
     <div class="term-card" data-step="3"><div class="w">Pagal tūrį · pagal savikainą</div><div class="syn">kokteilio dalijimo taisyklės</div><div class="def">Kai klausiama nenurodant taisyklės, rodyti abu atsakymus šalia vienas kito.</div></div>
-    <div class="term-card rule" data-step="4"><div class="w">Sutarta taisyklė</div><div class="syn">sutarties sąlyga</div><div class="def">Sutartyje nenurodyta, todėl AI turi tai pasakyti, o ne pasirinkti pats.</div></div>
+    <div class="term-card rule" data-step="4"><div class="w">Sutarta taisyklė</div><div class="syn">sutarties sąlyga</div><div class="def">Sutartyje nenurodyta, todėl D.I. turi tai pasakyti, o ne pasirinkti pats.</div></div>
   </div>
-  <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką AI laikys tiesa.</div>
+  <div class="callout" data-step="5" style="margin-top:26px">Tai ne techninė smulkmena: čia nusprendžiama, ką D.I. laikys tiesa.</div>
 </section>
 
 <section class="scene dark river-scene" id="s-r-platinum" data-steps="2" style="padding:50px 70px">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · platinum</div>
   <h2 style="font-size:40px" class="river-title">Ketvirtasis filtras: prasmė. Ežeras skaidrus.</h2>
   <div class="river-host"></div>
-  <div class="card river-bubble">Dabar paklauskime AI dar kartą – <b>to paties klausimo</b>.</div>
+  <div class="card river-bubble">Dabar paklauskime D.I. dar kartą – <b>to paties klausimo</b>.</div>
 </section>
 
 <!-- 12 · the same question, two AIs -->
@@ -554,7 +589,7 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
 <!-- 14–15 · drafts -->
 <section class="scene" id="s-forecast">
   <span class="draft">juodraštis</span>
-  <div class="eyebrow">Kas toliau</div>
+  <div class="eyebrow">8 · Kas toliau: prognozės</div>
   <h2>Kai duomenimis galima pasitikėti, galima prognozuoti</h2>
   <div class="card" style="margin-top:20px"><p>Lankytojai × oras × kalendorius → kiek Santakos gėrimų atvežti į kitą renginį.</p>
   <p class="muted">Tikri 2026 m. vasaros Kauno orai. Bus sukurta vėliau.</p></div>
@@ -562,7 +597,7 @@ LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
 
 <section class="scene dark" id="s-ladder">
   <div class="title-wrap">
-    <div class="eyebrow">8 · Klausimai</div>
+    <div class="eyebrow">9 · Klausimai</div>
     <h1>Ačiū. Klausimai?</h1>
     <div class="title-meta">Giedrius Valančius · Helmes</div>
   </div>
@@ -781,19 +816,20 @@ const hooks = {
   "s-bronze": k => solveBoard(document.getElementById("s-bronze"), k >= 2 ? ["bronze"] : []),
   "s-silver": k => solveBoard(document.getElementById("s-silver"), k >= 3 ? ["bronze", "silver"] : ["bronze"]),
   "s-drink": k => {
+    /* steps: 1 glass + question, 2 guesses, 3 VAT off, 4 split by volume, 5 split by cost, 6 the 35 % payout, 7 rule */
     const seg = (id, pct, text) => { const s = document.getElementById(id); s.style.flexBasis = pct + "%"; s.textContent = text; };
     const note = document.getElementById("price-note");
-    document.getElementById("liq-plain").style.opacity = k >= 3 ? 0 : 1;
-    ["liq-other", "liq-santaka"].forEach(id => document.getElementById(id).style.opacity = k >= 3 ? 1 : 0);
-    document.getElementById("liq-labels").style.opacity = k >= 3 ? 1 : 0;
-    document.getElementById("guesses").style.display = k >= 5 ? "none" : "grid";
+    document.getElementById("liq-plain").style.opacity = k >= 4 ? 0 : 1;
+    ["liq-other", "liq-santaka"].forEach(id => document.getElementById(id).style.opacity = k >= 4 ? 1 : 0);
+    document.getElementById("liq-labels").style.opacity = k >= 4 ? 1 : 0;
+    document.getElementById("guesses").style.display = k >= 4 ? "none" : "grid";
     const vatPct = 1.91 / 11 * 100, netPct = 100 - vatPct;
     seg("seg-vat", vatPct, "PVM €1,91");
-    if (k <= 2) { seg("seg-santaka", 0, ""); seg("seg-other", netPct, "€9,09 lieka bare"); note.textContent = "Pirmiausia PVM: tai ne baro ir ne Santakos pinigai."; }
-    if (k === 3) { seg("seg-santaka", netPct / 2, "Santaka €4,55"); seg("seg-other", netPct / 2, "kiti €4,55"); note.textContent = "Pagal tūrį: 75 ml iš 150 ml yra Santakos, taigi 50 %."; }
-    if (k >= 4) { seg("seg-santaka", netPct * .75, "Santaka €6,82"); seg("seg-other", netPct * .25, "€2,27"); note.textContent = "Pagal ingredientų savikainą: €1,80 iš €2,40 yra Santakos, taigi 75 %."; }
+    if (k <= 3) { seg("seg-santaka", 0, ""); seg("seg-other", netPct, "€9,09 lieka bare"); note.textContent = "Pirmiausia PVM – jį jau sutvarkėme silver sluoksnyje."; }
+    if (k === 4) { seg("seg-santaka", netPct / 2, "Santakos €4,55"); seg("seg-other", netPct / 2, "kitų €4,55"); note.textContent = "Pagal tūrį: 75 ml iš 150 ml yra Santakos, taigi 50 %."; }
+    if (k >= 5) { seg("seg-santaka", netPct * .75, "Santakos €6,82"); seg("seg-other", netPct * .25, "€2,27"); note.textContent = k >= 6 ? "Tai tik Santakos pardavimai. Pagal sutartį Santakai sumokama 35 % nuo jų:" : "Pagal ingredientų savikainą: €1,80 iš €2,40 yra Santakos, taigi 75 %."; }
   },
-  "s-gold": k => {
+  "s-star": k => {
     document.getElementById("star-fact").setAttribute("opacity", k >= 1 ? 1 : 0);
     document.getElementById("star-dims").setAttribute("opacity", k >= 2 ? 1 : 0);
   },
@@ -844,7 +880,7 @@ buildBoards();
 buildStar();
 const scenes = [...document.querySelectorAll(".scene")];
 const stepsOf = s => Math.max(0, ...[...s.querySelectorAll("[data-step]")].map(e => +e.dataset.step), +(s.dataset.steps || 0));
-const STEP_COUNTS = { "s-bronze": 2, "s-silver": 4, "s-gold": 3 };
+const STEP_COUNTS = { "s-bronze": 2, "s-silver": 4, "s-star": 3 };
 const totalSteps = s => Math.max(stepsOf(s), STEP_COUNTS[s.id] || 0);
 let si = 0, k = 0;
 

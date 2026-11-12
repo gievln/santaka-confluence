@@ -163,6 +163,12 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .contract td.type{color:var(--muted);font-size:20px}
 .contract .test{display:inline-block;margin-right:8px;font-size:17px;font-weight:700;color:var(--good);background:var(--good-t);border:1px solid var(--good);border-radius:999px;padding:3px 12px}
 
+.ex-card{display:none}
+.ex-card.on{display:block;animation:agendain .45s ease both}
+.example pre .miss{color:var(--bad);font-weight:500}
+.example .res{font-size:21px;color:var(--midnight);margin:12px 0 0}
+.err.active{box-shadow:0 0 0 3px var(--good)}
+
 /* stack: how the demo is built */
 .stack{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:26px}
 .stack .arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)}
@@ -415,19 +421,43 @@ status          VOID   ← dar neištaisyta
     <div class="board" data-board="silver"></div>
     <div>
       <div data-step="1" style="margin-bottom:14px"><span class="live">Gyvai: Snowflake</span></div>
-      <div class="example" data-step="1">
-        <div class="lbl" style="margin-top:0">Ta pati eilutė du kartus</div>
-<pre>…000123  SPRITZ  11.00  siunta 01
-<span class="x">…000123  SPRITZ  11.00  siunta 02</span></pre>
-        <div class="lbl">Atšauktas čekis</div>
-<pre><span class="x">BF0000013  SANTAKA MIDUS  4.96  VOID</span></pre>
+      <div class="example ex-card" data-ex="1">
+        <div class="lbl" style="margin-top:0">Ta pati eilutė atsiunčiama du kartus</div>
+<pre>…000123  SPRITZ  €11,00   siunta 1
+<span class="x">…000123  SPRITZ  €11,00   siunta 2</span></pre>
+<p class="res">Paliekama viena eilutė – pirmoji gauta.</p>
       </div>
-      <div class="example" data-step="2" style="margin-top:14px">
-<pre>11.00 su PVM       → <span class="ok">9.09 be PVM</span>
-SPRITZ, Spritzas   → <span class="ok">Santaka Spritz</span>
-LO26 ataskaitoje   → <span class="ok">trūksta G&amp;T, €1 290</span></pre>
+      <div class="example ex-card" data-ex="2">
+        <div class="lbl" style="margin-top:0">Atšauktas čekis lieka eksporte</div>
+<pre><span class="x">BF0000013  SANTAKA MIDUS  €4,96   VOID</span></pre>
+<p class="res">Barmenas čekį atšaukė – jis neskaičiuojamas.</p>
       </div>
-      <div data-step="4" style="display:flex;align-items:baseline;gap:18px;margin-top:18px">
+      <div class="example ex-card" data-ex="3">
+        <div class="lbl" style="margin-top:0">Nuolaida atkeliauja po kelių dienų</div>
+<pre>07-10 17:00  4 × Spritz      €44,00   gauta 07-11
+07-10 17:00  HAPPY HOUR −20 %  −€8,80   gauta 07-14</pre>
+<p class="res">Nuolaida priskiriama tam pačiam pardavimui: <b>€35,20</b>.</p>
+      </div>
+      <div class="example ex-card" data-ex="4">
+        <div class="lbl" style="margin-top:0">Vienoje sistemoje su PVM, kitoje – be</div>
+<pre>KasaPro   Spritz  €11,00  su PVM   → <span class="ok">€9,09</span>
+BarFlow   Spritz  €9,09   be PVM   → <span class="ok">€9,09</span></pre>
+<p class="res">Visur skaičiuojama be PVM, kaip numato sutartis.</p>
+      </div>
+      <div class="example ex-card" data-ex="5">
+        <div class="lbl" style="margin-top:0">Tas pats gėrimas – skirtingi pavadinimai</div>
+<pre>SPRITZ · Spritzas · Spritz Santaka 0.2
+                → <span class="ok">Santaka Spritz</span></pre>
+<p class="res">Visi kasų pavadinimai susiejami su vienu meniu gėrimu.</p>
+      </div>
+      <div class="example ex-card" data-ex="6">
+        <div class="lbl" style="margin-top:0">Organizatoriaus ataskaitoje trūksta eilutės</div>
+<pre>„Lina ir orkestras“
+Kasos:        G&amp;T parduota 560 vnt.
+Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
+<p class="res">Santakai nesumokėta <b>€1 290</b> – randame sulyginę ataskaitą su kasomis.</p>
+      </div>
+      <div data-step="7" style="display:flex;align-items:baseline;gap:18px;margin-top:22px">
         <div class="counter-big">48 501</div>
         <div style="font-size:22px;line-height:1.35">tikros eilutės<br><span class="muted">iš 49 594 eksportuotų</span></div>
       </div>
@@ -814,7 +844,17 @@ const hooks = {
   },
   "s-ask": k => growBars(document.getElementById("ask-bars"), k >= 1),
   "s-bronze": k => solveBoard(document.getElementById("s-bronze"), k >= 2 ? ["bronze"] : []),
-  "s-silver": k => solveBoard(document.getElementById("s-silver"), k >= 3 ? ["bronze", "silver"] : ["bronze"]),
+  /* silver: each step solves one error from the list and shows its example */
+  "s-silver": k => {
+    const scene = document.getElementById("s-silver"), order = [0, 1, 2, 3, 5, 6], step = Math.min(k, order.length);
+    const solved = [4, ...order.slice(0, step)], active = k >= 1 && k <= order.length ? order[k - 1] : -1;
+    scene.querySelectorAll(".err[data-layer]").forEach((e, i) => {
+      e.classList.toggle("solved", solved.includes(i));
+      e.classList.toggle("active", i === active);
+      e.querySelector(".mark").textContent = solved.includes(i) ? "✓" : "✗";
+    });
+    scene.querySelectorAll(".ex-card").forEach(c => c.classList.toggle("on", +c.dataset.ex === step && step >= 1));
+  },
   "s-drink": k => {
     /* steps: 1 glass + question, 2 guesses, 3 VAT off, 4 split by volume, 5 split by cost, 6 the 35 % payout, 7 rule */
     const seg = (id, pct, text) => { const s = document.getElementById(id); s.style.flexBasis = pct + "%"; s.textContent = text; };
@@ -880,7 +920,7 @@ buildBoards();
 buildStar();
 const scenes = [...document.querySelectorAll(".scene")];
 const stepsOf = s => Math.max(0, ...[...s.querySelectorAll("[data-step]")].map(e => +e.dataset.step), +(s.dataset.steps || 0));
-const STEP_COUNTS = { "s-bronze": 2, "s-silver": 4, "s-star": 3 };
+const STEP_COUNTS = { "s-bronze": 2, "s-silver": 7, "s-star": 3 };
 const totalSteps = s => Math.max(stepsOf(s), STEP_COUNTS[s.id] || 0);
 let si = 0, k = 0;
 

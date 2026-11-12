@@ -134,6 +134,37 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 @keyframes gaterise{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
 @keyframes gatepulse{0%{r:12;opacity:.9}100%{r:110;opacity:0}}
 
+/* stack: how the demo is built */
+.stack{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:26px}
+.stack .arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)}
+.tech-card{background:#fff;border:1px solid var(--line);border-top:6px solid var(--santaka);border-radius:14px;padding:16px 16px 18px}
+.tech-card h3{font-size:25px;margin:2px 0 10px}
+.tech-card .k{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-top:10px}
+.tech-card .k.demo{color:var(--other)}
+.tech-card p{font-size:18px;line-height:1.38;margin:2px 0 0}
+.tech-card.src{border-top-color:var(--mud,#8B6B3D)}
+
+/* app = a window onto Cortex Analyst */
+.route{display:flex;align-items:center;gap:8px;margin-top:24px;font-size:18px;white-space:nowrap}
+.route .hop{background:#fff;border:2px solid var(--line);border-radius:999px;padding:9px 14px;color:var(--midnight);font-weight:500}
+.route .hop.core{border-color:var(--santaka);background:var(--ice)}
+.route .to{color:var(--blue);font-size:26px}
+.windows{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:30px}
+.win{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 28px rgba(3,21,69,.10)}
+.win .bar{background:var(--ice2);border-bottom:1px solid var(--line);padding:9px 14px;font-size:15px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.win .bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:inline-block}
+.win .body{padding:16px 18px;font-size:17px;color:var(--storm)}
+.win .q{background:var(--ice);border-radius:10px;padding:8px 12px;display:inline-block;color:var(--midnight);margin-bottom:10px}
+.win table{width:100%;border-collapse:collapse;font-size:15px}
+.win td{border-bottom:1px solid var(--line);padding:5px 6px}
+.win td.r{text-align:right;font-variant-numeric:tabular-nums}
+.win .sql{font-family:"Roboto Mono",ui-monospace,monospace;font-size:13px;color:var(--muted);margin-top:8px}
+.pending{display:grid;gap:10px;margin:6px 0 4px}
+.pending span{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--ice2),var(--line),var(--ice2));background-size:200% 100%;animation:shimmer 1.6s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.mini-bars{display:grid;grid-template-columns:150px 1fr;gap:6px 10px;align-items:center;font-size:14px}
+.mini-bars span{height:14px;background:var(--santaka);border-radius:0 3px 3px 0}
+
 /* star schema */
 .star text{font-family:Roboto,"Segoe UI",system-ui,sans-serif}
 .star .node{transition:opacity .5s ease}
@@ -204,7 +235,78 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
   <div class="eyebrow">Duomenų šaltiniai · santaka – vieta, kur susilieja upės</div>
   <h2 style="font-size:40px" class="river-title">Iš kur Santaka gauna skaičius?</h2>
   <div class="river-host"></div>
-  <div class="card river-bubble">Duomenys jau surinkti viename ežere. <b>Paklauskime AI.</b></div>
+  <div class="card river-bubble">Visi duomenys – viename ežere. <b>Kaip tai pastatyta?</b></div>
+</section>
+
+<!-- 3a · how the demo is built -->
+<section class="scene" id="s-stack">
+  <div class="eyebrow">Kaip tai pastatėme demonstracijai</div>
+  <h2>Realybėje duomenys ateina iš sistemų. Mes juos imituojame.</h2>
+  <div class="stack">
+    <div class="tech-card src" data-step="1">
+      <h3>Šaltiniai</h3>
+      <div class="k">Realybėje</div><p>Kasų sistemos, bilietų platforma, Excel, CRM ir ERP – per API ar eksportus.</p>
+      <div class="k demo">Demonstracijoje</div><p>9 CSV failai su tyčia paliktomis klaidomis.</p>
+    </div>
+    <div class="arrow" data-step="2">→</div>
+    <div class="tech-card" data-step="2">
+      <h3>Snowflake</h3>
+      <div class="k">Kas tai</div><p>Duomenų sandėlis debesyje: viena vieta visiems įmonės duomenims.</p>
+      <div class="k demo">Demonstracijoje</div><p>CSV failai nukopijuoti į lenteles tokie, kokie yra – be jokio valymo.</p>
+    </div>
+    <div class="arrow" data-step="3">→</div>
+    <div class="tech-card" data-step="3">
+      <h3>Semantinis sluoksnis</h3>
+      <div class="k">Kas tai</div><p>Aprašas AI: kokios yra lentelės, kaip jos susijusios, ką reiškia stulpeliai.</p>
+      <div class="k demo">Demonstracijoje</div><p>Tik plonas aprašas ant neapdorotų lentelių.</p>
+    </div>
+    <div class="arrow" data-step="4">→</div>
+    <div class="tech-card" data-step="4">
+      <h3>Cortex Analyst</h3>
+      <div class="k">Kas tai</div><p>Snowflake dirbtinis intelektas: klausimą paverčia SQL užklausa ir ją įvykdo.</p>
+      <div class="k demo">Demonstracijoje</div><p>Žino tik tai, ką jam pasako semantinis sluoksnis.</p>
+    </div>
+    <div class="arrow" data-step="5">→</div>
+    <div class="tech-card" data-step="5">
+      <h3>Streamlit</h3>
+      <div class="k">Kas tai</div><p>Paprasta programėlė, veikianti Snowflake viduje.</p>
+      <div class="k demo">Demonstracijoje</div><p>Tik langas į Cortex Analyst: klausimas įeina, lentelė ir grafikas išeina.</p>
+    </div>
+  </div>
+  <div class="callout accent" data-step="6" style="margin-top:28px">Jokio duomenų valymo – tik kopija ir aprašas. Būtent taip dažnai prasideda AI bandomieji projektai.</div>
+</section>
+
+<!-- 3b · the app is only a window onto Cortex Analyst -->
+<section class="scene" id="s-app">
+  <div class="eyebrow">Programėlė – tik langas</div>
+  <div style="display:flex;align-items:center;gap:22px"><h2 style="margin:0">Kas nutinka, kai užduodate klausimą</h2><span class="live">Gyvai</span></div>
+  <div class="route">
+    <span class="hop" data-step="1">„Kurie renginiai pelningiausi?“</span><span class="to" data-step="1">→</span>
+    <span class="hop" data-step="2">Streamlit</span><span class="to" data-step="2">→</span>
+    <span class="hop core" data-step="3">Cortex Analyst + semantinis sluoksnis</span><span class="to" data-step="3">→</span>
+    <span class="hop" data-step="4">SQL</span><span class="to" data-step="4">→</span>
+    <span class="hop" data-step="4">Snowflake lentelės</span><span class="to" data-step="4">→</span>
+    <span class="hop" data-step="5">Atsakymas ir grafikas</span>
+  </div>
+  <div class="windows" data-step="6">
+    <div class="win">
+      <div class="bar"><i></i><i></i><i></i>&nbsp;Snowflake · Cortex Analyst</div>
+      <div class="body">
+        <div class="q">Kurie renginiai Santakai buvo pelningiausi?</div>
+        <div class="pending"><span style="width:92%"></span><span style="width:70%"></span><span style="width:80%"></span></div>
+        <div class="sql">SELECT … FROM SEMANTIC_VIEW(sem_santaka_naive …)</div>
+      </div>
+    </div>
+    <div class="win">
+      <div class="bar"><i></i><i></i><i></i>&nbsp;Mūsų Streamlit programėlė</div>
+      <div class="body">
+        <div class="q">Kurie renginiai Santakai buvo pelningiausi?</div>
+        <div class="pending"><span style="width:96%"></span><span style="width:52%"></span><span style="width:30%"></span></div>
+        <div class="sql">tas pats Cortex Analyst, tik su grafiku</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout" data-step="7" style="margin-top:24px">Tas pats variklis, tas pats atsakymas. Programėlė tik gražiau parodo – <b>ji nepadaro atsakymo teisingesnio.</b></div>
 </section>
 
 <!-- 4 · ask the AI -->

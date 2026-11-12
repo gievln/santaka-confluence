@@ -635,9 +635,15 @@ function createRiver() {
   mk("feMergeNode", { in: "b" }, merge);
   mk("feMergeNode", { in: "SourceGraphic" }, merge);
   const beds = mk("g", {}, svg), gateLayer = mk("g", {}, svg);
-  r.lake = mk("ellipse", { cx: 1310, cy: 330, rx: 150, ry: 115, fill: rgb(0), opacity: .9, style: "transition:fill 1.5s ease" }, svg);
-  mk("text", { x: 1310, y: 322, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#fff" }, svg).textContent = "Duomenų ežeras";
-  r.lakeSub = mk("text", { x: 1310, y: 350, "text-anchor": "middle", "font-size": 17, fill: "#fff", opacity: .85 }, svg);
+  /* the lake only appears once data starts flowing; before that the spot belongs to Santaka itself */
+  r.lakeGroup = mk("g", { opacity: 0, style: "transition:opacity 1s ease .3s" }, svg);
+  r.lake = mk("ellipse", { cx: 1310, cy: 345, rx: 150, ry: 105, fill: rgb(0), opacity: .9, style: "transition:fill 1.5s ease" }, r.lakeGroup);
+  mk("text", { x: 1310, y: 340, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#fff" }, r.lakeGroup).textContent = "Duomenų ežeras";
+  r.lakeSub = mk("text", { x: 1310, y: 366, "text-anchor": "middle", "font-size": 17, fill: "#fff", opacity: .85 }, r.lakeGroup);
+  r.brand = mk("g", { style: "transition:transform 1s cubic-bezier(.3,.8,.3,1);transform:translate(1310px,330px) scale(1.4)" }, svg);
+  mk("circle", { r: 62, fill: "#0D5FA6", stroke: "#9FD3F2", "stroke-width": 4 }, r.brand);
+  mk("path", { d: "M -34 -26 Q -6 -24 0 6 M 34 -26 Q 6 -24 0 6 M 0 6 L 0 34", fill: "none", stroke: "#fff", "stroke-width": 8, "stroke-linecap": "round" }, r.brand);
+  mk("text", { y: 92, "text-anchor": "middle", "font-size": 24, "font-weight": 700, "letter-spacing": "3", fill: "#fff" }, r.brand).textContent = "SANTAKA";
   const layer = mk("g", {}, svg);
   r.paths = SOURCES.map(([name, sample], i) => {
     const y = 40 + i * 98, d = `M 340 ${y} C 540 ${y}, 600 ${CONFLUENCE[1]}, ${CONFLUENCE[0]} ${CONFLUENCE[1]}`;
@@ -679,6 +685,8 @@ function createRiver() {
       g.classList.remove("rise");
       if (i === rise) { void g.getBoundingClientRect(); g.classList.add("rise"); }
     });
+    r.lakeGroup.setAttribute("opacity", visible ? 1 : 0);
+    r.brand.style.transform = visible ? "translate(1310px,138px) scale(.72)" : "translate(1310px,330px) scale(1.4)";
     r.lake.setAttribute("fill", rgb(level / GATES.length));
     r.lakeSub.textContent = LAKE_STATE[level];
   };

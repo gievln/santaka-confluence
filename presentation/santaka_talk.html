@@ -51,6 +51,16 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .title-wrap h1{font-size:72px;margin:12px 0 30px}
 .title-meta{font-size:26px;color:#BFD9F0}
 
+/* agenda */
+.agenda{list-style:none;padding:0;margin:34px 0 0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:16px 40px;counter-reset:a}
+.agenda li{display:grid;grid-template-columns:58px 1fr;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;counter-increment:a}
+.agenda li::before{content:counter(a);width:48px;height:48px;border-radius:50%;background:var(--santaka);color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.agenda b{display:block;font-size:26px;color:var(--midnight);line-height:1.2}
+.agenda span{font-size:18px;color:var(--muted)}
+.agenda li.live-item::before{background:var(--bad)}
+.scene.active .agenda li{animation:agendain .5s ease both;animation-delay:calc(var(--i) * .1s)}
+@keyframes agendain{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
 /* intro */
 .intro{display:grid;grid-template-columns:520px 1fr;gap:60px;margin-top:26px}
 .brand{font-size:78px;font-weight:700;color:var(--santaka);letter-spacing:.04em;line-height:1}
@@ -193,6 +203,22 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
     <div class="title-meta">Giedrius Valančius · Helmes</div>
     <div class="title-meta" style="margin-top:40px;font-size:20px;color:#9FD3F2">Demonstracija: Snowflake · dbt · Cortex Analyst · Streamlit</div>
   </div>
+</section>
+
+<!-- 1a · agenda -->
+<section class="scene" id="s-agenda">
+  <div class="eyebrow">Darbotvarkė</div>
+  <h2>Ką šiandien pamatysime</h2>
+  <ol class="agenda">
+    <li style="--i:0"><div><b>Susipažinkite: Santaka</b><span>kas ji ir kaip uždirba</span></div></li>
+    <li style="--i:1"><div><b>Iš kur ateina skaičiai</b><span>šaltiniai ir kaip pastatėme demonstraciją</span></div></li>
+    <li style="--i:2" class="live-item"><div><b>Paklauskime AI</b><span>greitas atsakymas – bet ar teisingas? · gyvai</span></div></li>
+    <li style="--i:3"><div><b>Kas gali būti negerai</b><span>klaidos, kurių nesimato iš pirmo žvilgsnio</span></div></li>
+    <li style="--i:4"><div><b>Valome sluoksnis po sluoksnio</b><span>bronze · silver · gold · prasmė</span></div></li>
+    <li style="--i:5" class="live-item"><div><b>Tas pats klausimas – du AI</b><span>neapdoroti ir sutvarkyti duomenys · gyvai</span></div></li>
+    <li style="--i:6"><div><b>Ką gali nuspręsti tik žmonės</b><span>taisyklės ir duomenų valdysena</span></div></li>
+    <li style="--i:7"><div><b>O kaip yra pas jus?</b><span>nuo procesų iki AI · diskusija</span></div></li>
+  </ol>
 </section>
 
 <!-- 2 · meet Santaka -->

@@ -169,6 +169,26 @@ p{font-size:28px;line-height:1.45;margin:0 0 18px}
 .example .res{font-size:21px;color:var(--midnight);margin:12px 0 0}
 .err.active{box-shadow:0 0 0 3px var(--good)}
 
+.kim{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px}
+.kim-card{background:#fff;border:1px solid var(--line);border-top:6px solid var(--santaka);border-radius:14px;padding:18px 24px}
+.kim-card.dim{border-top-color:var(--dark)}
+.kim-card .k{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+.kim-card h3{font-size:30px;margin:4px 0 6px}
+.kim-card p{font-size:22px;margin:0 0 10px}
+.kim-card .ex{font-size:19px;background:var(--ice2);border-radius:8px;padding:8px 12px;color:var(--dark)}
+.why{background:var(--ice);border-radius:14px;padding:16px 24px;margin-top:6px}
+.why-title{font-size:16px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+.why ul{margin:0;padding-left:22px}
+.why li{font-size:21px;line-height:1.4;color:var(--midnight);margin:4px 0}
+.models{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px}
+.model{background:#fff;border:1px solid var(--line);border-top:6px solid var(--vat);border-radius:14px;padding:16px 18px}
+.model.chosen{border-top-color:var(--good);box-shadow:0 0 0 3px var(--good-t)}
+.model h3{font-size:25px}
+.model .who{font-size:16px;color:var(--muted);margin:2px 0 10px}
+.model p{font-size:18px;line-height:1.4;margin:0 0 8px}
+.model p.no b{color:var(--other)}
+.model p.yes{color:var(--good);font-weight:700}
+
 /* stack: how the demo is built */
 .stack{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;margin-top:26px}
 .stack .arrow{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)}
@@ -481,7 +501,71 @@ Ataskaita:    <span class="miss">G&amp;T eilutės nėra</span></pre>
     <span style="color:var(--midnight);font-weight:700">Kiti faktai naudoja tas pačias dimensijas:</span>
     <span class="chip">Renginio pelnas</span><span class="chip">Bilietai</span><span class="chip">Išlaidos</span><span class="chip">Atsiskaitymo suderinimas</span>
   </div>
+<div class="callout" data-step="4" style="position:absolute;left:90px;right:90px;bottom:120px">Ši struktūra vadinama <b>žvaigžde</b> – tai Kimball metodologija. Kodėl būtent ji?</div>
 </section>
+
+<!-- silver: Kimball in one slide -->
+<section class="scene" id="s-kimball">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · Kimball metodologija</div>
+  <h2>Dvi pagrindinės sąvokos: faktai ir dimensijos</h2>
+  <div class="kim">
+    <div class="kim-card fact" data-step="1">
+      <div class="k">Faktas</div>
+      <h3>Kas įvyko ir kiek?</h3>
+      <p>Skaičiai, kuriuos sumuojame: suma eurais, kiekis, litrai.</p>
+      <div class="ex">4 × Spritz · €35,20 · 300 ml Santakos bitter</div>
+    </div>
+    <div class="kim-card dim" data-step="2">
+      <div class="k">Dimensija</div>
+      <h3>Kas, kur, kada, ką?</h3>
+      <p>Kontekstas, pagal kurį skaičius grupuojame ir filtruojame.</p>
+      <div class="ex">Nemuno Garsai · Santakos parkas · liepos 10 d. · Santaka Bitter</div>
+    </div>
+  </div>
+  <p data-step="3" style="margin-top:22px;font-size:24px"><b>Detalumo lygis:</b> viena fakto eilutė – vienas kasos įrašas. Kuo smulkiau, tuo daugiau klausimų galima atsakyti.</p>
+  <div class="why" data-step="4">
+    <div class="why-title">Kodėl Kimball tinka čia</div>
+    <ul>
+      <li>Vadovo klausimas „Kurie renginiai pelningiausi?“ – tai <b>faktas</b> (pelnas) pagal <b>dimensiją</b> (renginys). Struktūra atitinka klausimą.</li>
+      <li>Tas pats „renginys“ naudojamas visuose faktuose: pardavimuose, bilietuose, išlaidose, atsiskaitymuose.</li>
+      <li>D.I. lengviau: nedaug lentelių, aiškūs ryšiai, mažiau vietos spėlioti.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- silver: other ways to model -->
+<section class="scene" id="s-models">
+  <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · kiti modeliavimo būdai</div>
+  <h2>Kimball – ne vienintelis būdas</h2>
+  <div class="models">
+    <div class="model" data-step="1">
+      <h3>Normalizuotas modelis</h3><div class="who">3NF · Inmon</div>
+      <p><b>Kas:</b> kiekvienas duomuo saugomas vieną kartą, daug susietų lentelių.</p>
+      <p><b>Tinka:</b> bendram įmonės modeliui, operacinėms sistemoms.</p>
+      <p class="no"><b>Čia:</b> per daug jungčių vienam klausimui – D.I. lengviau suklysta.</p>
+    </div>
+    <div class="model" data-step="2">
+      <h3>Data Vault</h3><div class="who">centrai · ryšiai · istorija</div>
+      <p><b>Kas:</b> verslo raktai, ryšiai ir jų istorija laikomi atskirai.</p>
+      <p><b>Tinka:</b> daug dažnai besikeičiančių šaltinių, būtinas pilnas auditas.</p>
+      <p class="no"><b>Čia:</b> per sunkus šešiems renginiams ir devyniems failams.</p>
+    </div>
+    <div class="model" data-step="3">
+      <h3>Viena plati lentelė</h3><div class="who">„One Big Table“</div>
+      <p><b>Kas:</b> visi stulpeliai vienoje lentelėje.</p>
+      <p><b>Tinka:</b> vienai greitai ataskaitai.</p>
+      <p class="no"><b>Čia:</b> susimaišo skirtingi dalykai – bilietai, pardavimai, išlaidos – ir skaičiai dubliuojasi.</p>
+    </div>
+    <div class="model chosen" data-step="4">
+      <h3>Kimball</h3><div class="who">žvaigždė · faktai ir dimensijos</div>
+      <p><b>Kas:</b> faktai centre, dimensijos aplink.</p>
+      <p><b>Tinka:</b> verslo klausimams „kiek … pagal …“, ataskaitoms ir D.I.</p>
+      <p class="yes"><b>Čia:</b> ✓ pasirinkome</p>
+    </div>
+  </div>
+  <div class="callout" data-step="5" style="margin-top:24px">Gera praktika: <b>taisyklės</b> – viename sluoksnyje, <b>pateikimas</b> naudotojams ir D.I. – Kimball žvaigžde.</div>
+</section>
+
 
 <section class="scene dark river-scene" id="s-r-silver" data-steps="2" style="padding:50px 70px">
   <div class="eyebrow">5 · Valome sluoksnis po sluoksnio · silver</div>
